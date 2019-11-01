@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.serializers import ModelSerializer
 
 
 # Create your models here.
@@ -16,3 +17,12 @@ class Log(models.Model):
         indexes = [
             models.Index(fields=['models_name', 'record_id']),
         ]
+
+
+class LogSerializer(ModelSerializer):
+    """日志序列化器"""
+
+    class Meta:
+        model = Log
+        fields = '__all__'
+        read_only_fields = '__all__'
