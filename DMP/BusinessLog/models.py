@@ -1,5 +1,5 @@
 from django.db import models
-from rest_framework.serializers import ModelSerializer
+from rest_framework.serializers import ModelSerializer, ValidationError
 
 
 # Create your models here.
@@ -22,7 +22,11 @@ class Log(models.Model):
 class LogSerializer(ModelSerializer):
     """日志序列化器"""
 
+    def validate_models_name(self, models_name):
+        if len(models_name) > 10:
+            raise ValidationError("模块名太长")
+        return models_name
+
     class Meta:
         model = Log
         fields = '__all__'
-        read_only_fields = '__all__'

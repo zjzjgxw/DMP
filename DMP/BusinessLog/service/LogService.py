@@ -6,9 +6,9 @@ class LogService:
     """
     日志服务类
     """
+    errors = None
 
-    @staticmethod
-    def create(models_name, record_id, user_name, behavior_type, content):
+    def create(self, models_name, record_id, user_name, behavior_type, content):
         """
         新建日志
         :param models_name:
@@ -24,8 +24,12 @@ class LogService:
                   "content": content,
                   'record_time': datetime.now()})
         if serializer.is_valid():
-            return serializer.save()
-        return serializer.errors
-        # log = Log(models_name=models_name, record_id=record_id, behavior_type=behavior_type, user_name=user_name,
-        #           content=content,
-        #           record_time=datetime.now())
+            serializer.create(serializer.data)
+            return True
+        self.errors = serializer.errors
+        return False
+
+    def list(self, models_name, record_id=None):
+        query_set = Log.objects.filter(models_name=models_name)
+        serializer = LogSerializer(query_set, many=True)
+        return serializer.data
