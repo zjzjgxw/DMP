@@ -11,13 +11,17 @@ class LogViewSet(ViewSet):
 
     def list(self, request):
         params = request.data
-        service = LogService()
-        return Response(service.list('test'))
+        if 'models_name' not in params:
+            return Response(return_format(20002))
+        if 'record_id' not in params:
+            params["record_id"] = None
+        service = LogService(models_name=params['models_name'])
+        return Response(service.list(params["record_id"]))
 
     def create(self, request):
         params = request.data
-        service = LogService()
-        res = service.create(models_name=params['models_name'], record_id=params['record_id'],
+        service = LogService(models_name=params['models_name'])
+        res = service.create(record_id=params['record_id'],
                              user_name=params['user_name'], behavior_type=params['behavior_type'],
                              content=params['content'])
         if res:

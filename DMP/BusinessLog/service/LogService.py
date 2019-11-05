@@ -8,10 +8,12 @@ class LogService:
     """
     errors = None
 
-    def create(self, models_name, record_id, user_name, behavior_type, content):
+    def __init__(self, models_name):
+        self.models_name = models_name
+
+    def create(self, record_id, user_name, behavior_type, content):
         """
         新建日志
-        :param models_name:
         :param record_id:
         :param user_name:
         :param behavior_type:
@@ -19,7 +21,7 @@ class LogService:
         :return:
         """
         serializer = LogSerializer(
-            data={"models_name": models_name, "record_id": record_id, "behavior_type": behavior_type,
+            data={"models_name": self.models_name, "record_id": record_id, "behavior_type": behavior_type,
                   "user_name": user_name,
                   "content": content,
                   'record_time': datetime.now()})
@@ -29,7 +31,14 @@ class LogService:
         self.errors = serializer.errors
         return False
 
-    def list(self, models_name, record_id=None):
-        query_set = Log.objects.filter(models_name=models_name)
+    def list(self, record_id=None):
+        """
+        获取日志列表
+        :param record_id:
+        :return:
+        """
+        query_set = Log.objects.filter(models_name=self.models_name)
+        if record_id:
+            query_set = query_set.filter(record_id=record_id)
         serializer = LogSerializer(query_set, many=True)
         return serializer.data
