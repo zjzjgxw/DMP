@@ -16,6 +16,6 @@ Including another URLconf
 from django.urls import path, include
 
 urlpatterns = [
-    path('api/', include('DMP.fileSystem.urls')),
-    path('api/', include('DMP.BusinessLog.urls'))
+    path('api/', include('DMP.BusinessLog.urls')),
+    path('api/', include('DMP.District.urls'))
 ]

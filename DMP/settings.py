@@ -36,7 +36,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'rest_framework',
-    'DMP.BusinessLog'
+    'DMP.BusinessLog',
+    'DMP.District'
 ]
 
 MIDDLEWARE = [
@@ -82,11 +83,20 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306'
+    },
+    'DistrictMysql': {
+        'NAME': 'district',
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306'
     }
 }
 
 DATABASES_APPS_MAPPING = {
     'BusinessLog': 'BusinessLog',
+    'District': 'DistrictMysql'
 }
 
 DATABASE_ROUTERS = ['DMP.database_router.DatabaseAppsRouter']
