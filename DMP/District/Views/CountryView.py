@@ -1,21 +1,24 @@
 from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from DMP.Helps.func import return_format
+from DMP.District.Services.CountryService import *
 
 
-class DistrictViewSet(ViewSet):
+class CountryView(ViewSet):
     """
-    业务日志类
+    国家View
     """
 
     def list(self, request):
-        return Response(return_format(200, "hello"))
+        service = CountryService()
+        return Response(return_format(200, data=service.list()))
 
     def create(self, request):
-        return Response(return_format(20001, "msg"))
+        pass
 
     def retrieve(self, request, pk=None):
-        pass
+        service = CountryService()
+        return Response(return_format(200, data=service.detail(pk)))
 
     def update(self, request, pk=None):
         pass
