@@ -37,7 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'rest_framework',
     'DMP.BusinessLog',
-    'DMP.District'
+    'DMP.District',
+    'DMP.File'
 ]
 
 MIDDLEWARE = [
@@ -91,12 +92,30 @@ DATABASES = {
         'PASSWORD': '',
         'HOST': 'localhost',
         'PORT': '3306'
+    },
+    'BusinessMysql': {
+        'NAME': 'business',
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306'
+    },
+    'FileMysql': {
+        'NAME': 'file',
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306'
     }
 }
 
 DATABASES_APPS_MAPPING = {
     'BusinessLog': 'BusinessLog',
-    'District': 'DistrictMysql'
+    'District': 'DistrictMysql',
+    'Business': 'BusinessMysql',
+    'File': 'FileMysql'
 }
 
 DATABASE_ROUTERS = ['DMP.database_router.DatabaseAppsRouter']
@@ -134,7 +153,7 @@ USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
-
+MEDIA_ROOT = os.path.join(BASE_DIR, 'Upload')
 STATIC_URL = '/static/'
 
 APPEND_SLASH = False
@@ -150,7 +169,6 @@ LOGGING = {
     },
     'loggers': {
         'django.db.backends': {
-            'handlers': ['console'],
             'handlers': ['console'],
             'propagate': True,
             'level': 'DEBUG',

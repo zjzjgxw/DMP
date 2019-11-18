@@ -2,7 +2,7 @@
 .idea/
 db.sqlite3
 doc/
-
+Upload/
 __pycache__/
 
 
