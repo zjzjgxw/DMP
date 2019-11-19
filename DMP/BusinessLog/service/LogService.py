@@ -10,6 +10,7 @@ class LogService:
 
     def __init__(self, models_name):
         self.models_name = models_name
+        self.error_info = None
 
     def create(self, record_id, user_name, behavior_type, content):
         """
@@ -28,7 +29,8 @@ class LogService:
         if serializer.is_valid():
             serializer.create(serializer.data)
             return True
-        self.errors = serializer.errors
+        self.errors = 10001
+        self.error_info = serializer.errors
         return False
 
     def list(self, record_id=None):

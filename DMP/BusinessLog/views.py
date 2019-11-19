@@ -12,7 +12,7 @@ class LogViewSet(ViewSet):
     def list(self, request):
         params = request.data
         if 'models_name' not in params:
-            return Response(return_format(20002))
+            return Response(return_format(10001))
         if 'record_id' not in params:
             params["record_id"] = None
         service = LogService(models_name=params['models_name'])
@@ -26,7 +26,7 @@ class LogViewSet(ViewSet):
                              content=params['content'])
         if res:
             return Response(return_format())
-        return Response(return_format(20001, data=service.errors))
+        return Response(return_format(service.errors))
 
     def retrieve(self, request, pk=None):
         pass

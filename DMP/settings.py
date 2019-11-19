@@ -38,7 +38,8 @@ INSTALLED_APPS = [
     'rest_framework',
     'DMP.BusinessLog',
     'DMP.District',
-    'DMP.File'
+    'DMP.File',
+    'DMP.Business'
 ]
 
 MIDDLEWARE = [

@@ -13,25 +13,25 @@ class FileViewSet(ViewSet):
     def list(self, request):
         params = request.data
         if 'ids' not in params:
-            return Response(return_format(20002, ''))
+            return Response(return_format(10001, ''))
         ids = params['ids']
         service = FileService()
         res = service.list(ids)
         if res:
             return Response(return_format(200, data=res))
         else:
-            return Response(return_format(service.errors['code'], msg=service.errors['msg']))
+            return Response(return_format(service.errors))
 
     def create(self, request):
-        if 'file' not in request.FILES:
-            return Response(return_format(20002))
-        file = request.FILES['file']
+        if 'file' not in request.data:
+            return Response(return_format(10001))
+        file = request.data['file']
         service = FileService()
         res = service.upload(file)
         if res:
             return Response(return_format(200, '', data=res))
         else:
-            return Response(return_format(200, '', data=service.errors))
+            return Response(return_format(service.errors))
 
     def retrieve(self, request, pk=None):
         pass

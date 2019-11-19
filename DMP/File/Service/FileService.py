@@ -32,10 +32,10 @@ class FileService:
         :return:
         """
         if not isinstance(ids, list):
-            self.errors = {"msg": "参数必须为数组", "code": 20002}
+            self.errors = 10001
             return False
         if len(ids) == 0:
-            self.errors = {"msg": "数组为空", "code": 20002}
+            self.errors = 10001
             return False
 
         query_set = Files.objects.filter(id__in=ids)
