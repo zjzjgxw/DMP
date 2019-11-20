@@ -1,8 +1,9 @@
 from django.db import models
-from .BasicInfo import BasicInfo
+
+from DMP.Business.Models.BasicInfo import BasicInfo
 
 
-class BusinessAuthInfo(models):
+class BusinessAuthInfo(models.Model):
     """
     商户认证信息表
     """
@@ -14,7 +15,8 @@ class BusinessAuthInfo(models):
         (5, '500以上'),
     )
 
-    business = models.OneToOneField(BasicInfo, on_delete=models.SET_NULL)
+    business = models.OneToOneField(BasicInfo, on_delete=models.SET_NULL, db_column='business_basic_id',
+                                    db_constraint=False)
     name = models.CharField("企业名", max_length=30, default="")
     unique_code = models.CharField("企业统一编码", max_length=30, default="")
     img_id = models.BigIntegerField("企业营业执照文件id", default=0)
@@ -27,5 +29,8 @@ class BusinessAuthInfo(models):
     state_id = models.PositiveIntegerField("省份id", default=0)
     city_id = models.PositiveIntegerField("城市id", default=0)
     address = models.CharField("详细地址", max_length=200, default="")
-    created_at = models.DateTimeField("日志产生时间", auto_now_add=True)
-    updated_at = models.DateTimeField("日志修改时间", auto_now=True)
+    created_at = models.DateTimeField("产生时间", auto_now_add=True)
+    updated_at = models.DateTimeField("修改时间", auto_now=True)
+
+    class Meta:
+        db_table = 'business_auth'
