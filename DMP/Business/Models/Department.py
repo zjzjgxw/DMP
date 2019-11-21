@@ -14,13 +14,13 @@ class Department(models.Model):
     delete_flag = models.PositiveSmallIntegerField("删除标记", default=0)
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
-    usrs = models.ManyToManyField(User, through=DepartmentUserRelation, through_fields=('department', 'user'))
+    usrs = models.ManyToManyField(User, through='DepartmentUserRelation', through_fields=('department', 'user'))
 
 
 class DepartmentUserRelation(models.Model):
-    department = models.ForeignKey(Department, on_delete=models.SET_NULL, db_constraint=False,
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, db_constraint=False,
                                    db_column='business_department_id')
-    user = models.ForeignKey(User, on_delete=models.SET_NULL, db_constraint=False, db_column='business_user_id')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, db_constraint=False, db_column='business_user_id')
 
     class Meta:
         db_table = 'business_user_department_relation'

@@ -1,11 +1,12 @@
 from django.db import models
 from DMP.Business.Models.BasicInfo import BasicInfo
 from DMP.Business.Models.PermissionRole import PermissionRole
+from rest_framework.serializers import ModelSerializer
 
 
 class User(models.Model):
     """
-    商户认证信息表
+    用户
     """
     UN_KNOW = 0
     MAN = 1
@@ -24,11 +25,12 @@ class User(models.Model):
     web = models.URLField("网址", default="")
     entry_date = models.DateField("入职日期", auto_now_add=True)
     last_login = models.DateTimeField("最近登录时间")
-    last_ip = models.GenericIPAddressField("最近登录IP")
+    last_ip = models.GenericIPAddressField("最近登录IP", default='')
     login_count = models.PositiveIntegerField("登录次数", default=0)
     sex = models.PositiveSmallIntegerField("性别", choices=SEX_CHOICES, default=UN_KNOW)
     delete_flag = models.PositiveSmallIntegerField("删除标记", default=0)
     is_admin = models.PositiveSmallIntegerField("是否为管理员", default=0)
+    is_active = models.PositiveSmallIntegerField("激活标示", default=1)
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
     permission_roles = models.ManyToManyField(PermissionRole, through=UserRoleRelation,
@@ -43,3 +45,10 @@ class UserRoleRelation(models.Model):
 
     class Meta:
         db_table = 'business_user_role_relation'
+
+
+class UserSerializer(ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'account', 'password', 'name', 'web', 'entry_date', 'last_login', 'last_ip', 'login_count',
+                  'sex', 'is_admin', 'is_active']
