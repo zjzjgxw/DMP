@@ -32,3 +32,4 @@ class BusinessSerializer(ModelSerializer):
     class Meta:
         model = BasicInfo
         fields = ['id', 'name', 'logo_img_id', 'email']
+        extra_kwargs = {'email': {'required': True}}

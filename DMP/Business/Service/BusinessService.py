@@ -1,5 +1,8 @@
 from DMP.Business.Models.BasicInfo import BasicInfo, BusinessSerializer
 from DMP.Core.Service import BasicService
+from DMP.Core.Exceptions import ValidationException
+from DMP.Business.Service.UserService import UserService
+from django.db import transaction
 
 
 class BusinessService(BasicService):
@@ -14,11 +17,14 @@ class BusinessService(BasicService):
         :param kwargs:
         :return:
         """
-        serializer = BusinessSerializer(data=kwargs)
-        if serializer.is_valid():
-            serializer.save()
-        else:
-            cls.errors = serializer.errors
-            cls.error_code = 10001
-            return False
+        try:
+            with transaction.atomic('BusinessMysql'):
+                serializer = BusinessSerializer(data=kwargs)
+                if serializer.is_valid():
+                    business = serializer.save()
+                    UserService.create_admin_user(business.email, business)
+                else:
+                    raise ValidationException(detail=serializer.errors)
+        except ValidationException:
+            raise
         return True

@@ -22,7 +22,6 @@ class User(models.Model):
     account = models.EmailField("账号名", max_length=100, default="")
     password = models.CharField("密码", max_length=100, default="")
     name = models.CharField("真实姓名", max_length=100, default="")
-    web = models.URLField("网址", default="")
     entry_date = models.DateField("入职日期", auto_now_add=True)
     last_login = models.DateTimeField("最近登录时间")
     last_ip = models.GenericIPAddressField("最近登录IP", default='')
@@ -50,5 +49,5 @@ class UserRoleRelation(models.Model):
 class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'account', 'password', 'name', 'web', 'entry_date', 'last_login', 'last_ip', 'login_count',
+        fields = ['id', 'account', 'password', 'name', 'entry_date', 'last_login', 'last_ip', 'login_count',
                   'sex', 'is_admin', 'is_active']
