@@ -2,6 +2,7 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from DMP.Business.Service.BusinessService import BusinessService
 from DMP.Helps.func import return_format
+from django.contrib.auth.models import User
 
 
 class BusinessViewSet(ViewSet):
@@ -17,7 +18,7 @@ class BusinessViewSet(ViewSet):
         if res:
             return Response(return_format(200, data=res))
         else:
-            return Response(return_format(BusinessService.error_code,data=BusinessService.errors))
+            return Response(return_format(BusinessService.error_code, data=BusinessService.errors))
 
     def retrieve(self, request, pk=None):
         pass

@@ -3,6 +3,7 @@ from DMP.Core.Service import BasicService
 from DMP.Core.Exceptions import ValidationException
 from DMP.Business.Service.UserService import UserService
 from django.db import transaction
+from django.db import IntegrityError
 
 
 class BusinessService(BasicService):
@@ -22,9 +23,11 @@ class BusinessService(BasicService):
                 serializer = BusinessSerializer(data=kwargs)
                 if serializer.is_valid():
                     business = serializer.save()
-                    UserService.create_admin_user(business.email, business)
+                    UserService.create_admin_user(business.email, business.id)
                 else:
                     raise ValidationException(detail=serializer.errors)
         except ValidationException:
+            raise
+        except IntegrityError:
             raise
         return True

@@ -7,7 +7,7 @@ class PermissionRole(models.Model):
     """
     权限角色
     """
-    business = models.ForeignKey(BasicInfo, on_delete=models.SET_NULL, db_column='business_basic_id',
+    business = models.ForeignKey(BasicInfo, on_delete=models.CASCADE, db_column='business_basic_id',
                                  db_constraint=False)
     name = models.CharField("角色名称", max_length=20, default="")
     role_desc = models.CharField("描述", max_length=200, default="")

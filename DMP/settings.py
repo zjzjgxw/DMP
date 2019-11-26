@@ -176,3 +176,7 @@ LOGGING = {
         },
     }
 }
+
+REST_FRAMEWORK = {
+    'EXCEPTION_HANDLER': 'DMP.Core.Exceptions.custom_exception_handler'
+}
