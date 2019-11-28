@@ -4,6 +4,11 @@ from DMP.Business.Models.PermissionRole import PermissionRole
 from rest_framework.serializers import ModelSerializer
 
 
+class UserManager(models.Manager):
+    def get_user_by_account(self, account):
+        return self.get(account=account, is_active=1)
+
+
 class User(models.Model):
     """
     用户
@@ -35,6 +40,7 @@ class User(models.Model):
     permission_roles = models.ManyToManyField(PermissionRole, through='UserRoleRelation',
                                               through_fields=("user", "role"),
                                               )
+    objects = UserManager()
 
 
 class UserRoleRelation(models.Model):

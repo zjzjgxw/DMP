@@ -1,7 +1,8 @@
-from DMP.Business.Models.User import UserSerializer
+from DMP.Business.Models.User import UserSerializer, User
 from DMP.Core.Service import BasicService
-from DMP.Core.Exceptions import ValidationException
-from django.contrib.auth.hashers import make_password
+from DMP.Core.Exceptions import ValidationException, UserNotExistException
+from django.contrib.auth.hashers import make_password, check_password
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class UserService(BasicService):
@@ -26,3 +27,18 @@ class UserService(BasicService):
         else:
             raise ValidationException(serializer.errors)
         return True
+
+    @classmethod
+    def login(cls, account, password):
+        """
+        用户登录
+        :param account:
+        :param password:
+        :return:
+        """
+        try:
+            user = User.objects.get_user_by_account(account)
+        except ObjectDoesNotExist:
+            raise UserNotExistException()
+        res = check_password(password, user.password)
+        return res

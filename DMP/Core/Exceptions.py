@@ -11,18 +11,37 @@ def custom_exception_handler(exc, context):
     # Now add the HTTP status code to the response.
     if response is not None:
         if isinstance(exc, CustomException):
-            response.data['code'] = exc.code
-            response.data['msg'] = get_msg(exc.code)
+            response.data['code'] = exc.msg_code
+            response.data['msg'] = get_msg(exc.msg_code)
+            del response.data['detail']
     return response
 
 
 class CustomException(APIException):
     status_code = 200
-    code = 200
+    msg_code = 200
+
+    def __init__(self, detail=None, code=None):
+        super().__init__(detail, code)
 
 
 class ValidationException(CustomException):
     """
     自定义验证错误异常
     """
-    code = 10001
+    default_msg_code = 10001
+
+    def __init__(self, msg_code=None, detail=None, code=None):
+        if msg_code is None:
+            self.msg_code = self.default_msg_code
+        else:
+            self.msg_code = msg_code
+        super().__init__(detail, code)
+
+
+class UserNotExistException(CustomException):
+    """
+    用户不存在错误异常
+    """
+    msg_code = 10004
+
