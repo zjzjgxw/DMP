@@ -4,6 +4,7 @@ from DMP.Helps.func import return_format
 from rest_framework.decorators import action
 from DMP.Core.Exceptions import ValidationException
 from DMP.Business.Service.UserService import UserService
+from DMP.Core.Token import auth_permission_required
 
 
 class UserViewSet(ViewSet):
@@ -11,8 +12,9 @@ class UserViewSet(ViewSet):
     用户视图
     """
 
+    @auth_permission_required(["user_list", "user_create"])
     def list(self, request):
-        pass
+        return Response(return_format(200))
 
     def create(self, request):
         pass
@@ -35,5 +37,5 @@ class UserViewSet(ViewSet):
             raise ValidationException(10002)
         if "password" not in request.data:
             raise ValidationException(10003)
-        res = UserService.login(request.data['account'], request.data['password'])
-        return Response(return_format(200, data=res))
+        token = UserService.login(request.data['account'], request.data['password'])
+        return Response(return_format(200), headers={'Authorization': token})

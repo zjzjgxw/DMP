@@ -45,3 +45,9 @@ class UserNotExistException(CustomException):
     """
     msg_code = 10004
 
+
+class AccountPasswordWrongException(CustomException):
+    """
+    账号密码错误
+    """
+    msg_code = 10005

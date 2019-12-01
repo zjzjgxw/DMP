@@ -1,8 +1,9 @@
 from DMP.Business.Models.User import UserSerializer, User
 from DMP.Core.Service import BasicService
-from DMP.Core.Exceptions import ValidationException, UserNotExistException
+from DMP.Core.Exceptions import ValidationException, UserNotExistException, AccountPasswordWrongException
 from django.contrib.auth.hashers import make_password, check_password
 from django.core.exceptions import ObjectDoesNotExist
+from DMP.Core.Token import JwtToken
 
 
 class UserService(BasicService):
@@ -20,8 +21,9 @@ class UserService(BasicService):
         """
         password = '123456'
 
-        serializer = UserSerializer(data={"account": email, "business": business_id,
-                                          'password': make_password(password)})
+        serializer = UserSerializer(data={"account": email, "business": business_id, "name": "admin",
+                                          'password': make_password(
+                                              password)})
         if serializer.is_valid():
             serializer.save()
         else:
@@ -41,4 +43,9 @@ class UserService(BasicService):
         except ObjectDoesNotExist:
             raise UserNotExistException()
         res = check_password(password, user.password)
-        return res
+        if res:
+            jwt = JwtToken()
+            token = jwt.get_token(id=user.id, name=user.name, account=user.account)
+            return token
+        else:
+            raise AccountPasswordWrongException()
