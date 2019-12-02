@@ -4,6 +4,11 @@ from DMP.Business.Models.User import User
 from rest_framework.serializers import ModelSerializer
 
 
+class DepartmentManager(models.Manager):
+    def detail(self, department_id, business_id):
+        return self.get(id=department_id, business=business_id, delete_flag=0)
+
+
 class Department(models.Model):
     """
     部门结构
@@ -16,6 +21,7 @@ class Department(models.Model):
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
     usrs = models.ManyToManyField(User, through='DepartmentUserRelation', through_fields=('department', 'user'))
+    objects = DepartmentManager()
 
 
 class DepartmentUserRelation(models.Model):

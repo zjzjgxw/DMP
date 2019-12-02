@@ -26,14 +26,18 @@ class DepartmentViewSet(ViewSet):
         DepartmentService.create(params)
         return Response(return_format(200, msg="创建成功"))
 
-        def retrieve(self, request, pk=None):
-            pass
+    def retrieve(self, request, pk=None):
+        pass
 
-        def update(self, request, pk=None):
-            pass
+    @auth_permission_required(["department_update"])
+    def update(self, request, pk=None):
+        business_id = request.dmp_user['business_id']
+        name = request.data['name']
+        DepartmentService.update(name=name, department_id=pk, business_id=business_id)
+        return Response(return_format(200, msg="修改成功"))
 
-        def partial_update(self, request, pk=None):
-            pass
+    def partial_update(self, request, pk=None):
+        pass
 
-        def destroy(self, request, pk=None):
-            pass
+    def destroy(self, request, pk=None):
+        pass

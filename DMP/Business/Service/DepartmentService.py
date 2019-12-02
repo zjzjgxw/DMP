@@ -1,6 +1,7 @@
 from DMP.Core.Service import BasicService
-from DMP.Core.Exceptions import ValidationException
-from DMP.Business.Models.Department import DepartmentSerializer
+from DMP.Core.Exceptions import ValidationException, ObjectDoesNotExistException
+from DMP.Business.Models.Department import DepartmentSerializer, Department
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class DepartmentService(BasicService):
@@ -19,5 +20,17 @@ class DepartmentService(BasicService):
         if serializer.is_valid():
             serializer.save()
             return True
+        else:
+            raise ValidationException(detail=serializer.errors)
+
+    @classmethod
+    def update(cls, name, department_id, business_id):
+        try:
+            department = Department.objects.detail(department_id=department_id, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        serializer = DepartmentSerializer(instance=department, data={"name": name}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
         else:
             raise ValidationException(detail=serializer.errors)

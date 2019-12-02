@@ -64,3 +64,10 @@ class AuthFailedException(CustomException):
     认证失败
     """
     msg_code = 10006
+
+
+class ObjectDoesNotExistException(CustomException):
+    """
+    查找不到对应信息
+    """
+    msg_code = 999
