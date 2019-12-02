@@ -11,9 +11,15 @@ def custom_exception_handler(exc, context):
     # Now add the HTTP status code to the response.
     if response is not None:
         if isinstance(exc, CustomException):
-            response.data['code'] = exc.msg_code
-            response.data['msg'] = get_msg(exc.msg_code)
-            del response.data['detail']
+            if isinstance(response.data, dict):
+                response.data['code'] = exc.msg_code
+                response.data['msg'] = get_msg(exc.msg_code)
+                if "detail" in response.data:
+                    del response.data['detail']
+            if isinstance(response.data, list):
+                tmp = response.data
+                del response.data
+                response.data = {"code": exc.msg_code, "msg": get_msg(exc.msg_code), "detail": tmp}
     return response
 
 
@@ -51,3 +57,10 @@ class AccountPasswordWrongException(CustomException):
     账号密码错误
     """
     msg_code = 10005
+
+
+class AuthFailedException(CustomException):
+    """
+    认证失败
+    """
+    msg_code = 10006

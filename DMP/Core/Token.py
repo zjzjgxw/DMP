@@ -1,4 +1,5 @@
 import jwt
+from .Exceptions import AuthFailedException
 
 
 class JwtToken:
@@ -8,7 +9,10 @@ class JwtToken:
         return jwt.encode(kwargs, self.secret_key, algorithm='HS256')
 
     def get_info(self, token):
-        return jwt.decode(token, self.secret_key)
+        try:
+            return jwt.decode(token, self.secret_key)
+        except:
+            raise AuthFailedException()
 
 
 def auth_permission_required(perms):

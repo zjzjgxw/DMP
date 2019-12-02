@@ -45,7 +45,7 @@ class UserService(BasicService):
         res = check_password(password, user.password)
         if res:
             jwt = JwtToken()
-            token = jwt.get_token(id=user.id, name=user.name, account=user.account)
+            token = jwt.get_token(id=user.id, name=user.name, account=user.account, business_id=user.business_id)
             return token
         else:
             raise AccountPasswordWrongException()

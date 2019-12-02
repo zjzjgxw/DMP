@@ -1,13 +1,14 @@
 from django.db import models
 from DMP.Business.Models.BasicInfo import BasicInfo
 from DMP.Business.Models.User import User
+from rest_framework.serializers import ModelSerializer
 
 
 class Department(models.Model):
     """
     部门结构
     """
-    business = models.ForeignKey(BasicInfo, on_delete=models.SET_NULL, db_column='business_basic_id',
+    business = models.ForeignKey(BasicInfo, on_delete=models.CASCADE, db_column='business_basic_id',
                                  db_constraint=False)
     name = models.CharField("部门名称", max_length=100, default="")
     parent_id = models.PositiveIntegerField("父节点id", default=0)
@@ -24,3 +25,10 @@ class DepartmentUserRelation(models.Model):
 
     class Meta:
         db_table = 'business_user_department_relation'
+
+
+class DepartmentSerializer(ModelSerializer):
+    class Meta:
+        model = Department
+        fields = ['id', 'name', 'parent_id', 'business', 'delete_flag']
+        extra_kwargs = {'name': {'required': True}}
