@@ -8,6 +8,9 @@ class DepartmentManager(models.Manager):
     def detail(self, department_id, business_id):
         return self.get(id=department_id, business=business_id, delete_flag=0)
 
+    def tree(self, business_id):
+        return self.filter(business=business_id, delete_flag=0)
+
 
 class Department(models.Model):
     """

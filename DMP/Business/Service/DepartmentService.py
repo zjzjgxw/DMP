@@ -34,3 +34,20 @@ class DepartmentService(BasicService):
             serializer.save()
         else:
             raise ValidationException(detail=serializer.errors)
+
+    @classmethod
+    def delete(cls, department_id, business_id):
+        try:
+            department = Department.objects.detail(department_id=department_id, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        serializer = DepartmentSerializer(instance=department, data={"delete_flag": 1}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationException(detail=serializer.errors)
+
+    @classmethod
+    def list(cls, business_id):
+        department_list = Department.objects.tree(business_id=business_id)
+        return None

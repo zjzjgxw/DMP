@@ -13,6 +13,8 @@ class DepartmentViewSet(ViewSet):
 
     @auth_permission_required(["department_list"])
     def list(self, request):
+        business_id = request.dmp_user['business_id']
+        DepartmentService.list(business_id)
         return Response(return_format(200))
 
     @auth_permission_required(["department_create"])
@@ -32,6 +34,8 @@ class DepartmentViewSet(ViewSet):
     @auth_permission_required(["department_update"])
     def update(self, request, pk=None):
         business_id = request.dmp_user['business_id']
+        if "name" not in request.data:
+            raise ValidationException()
         name = request.data['name']
         DepartmentService.update(name=name, department_id=pk, business_id=business_id)
         return Response(return_format(200, msg="修改成功"))
@@ -39,5 +43,8 @@ class DepartmentViewSet(ViewSet):
     def partial_update(self, request, pk=None):
         pass
 
+    @auth_permission_required(["department_delete"])
     def destroy(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        DepartmentService.delete(department_id=pk, business_id=business_id)
+        return Response(return_format(200, msg="删除成功"))
