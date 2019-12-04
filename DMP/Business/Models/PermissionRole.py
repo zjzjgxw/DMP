@@ -1,6 +1,7 @@
 from django.db import models
 from DMP.Business.Models.BasicInfo import BasicInfo
 from DMP.Business.Models.Permission import Permission
+from rest_framework import serializers
 
 
 class PermissionRole(models.Model):
@@ -29,3 +30,10 @@ class PermissionRoleRelation(models.Model):
 
     class Meta:
         db_table = 'business_permission_role_relation'
+
+
+class PermissionRoleSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PermissionRole
+        fields = ['id', 'name', 'role_desc', 'business']
+        extra_kwargs = {'role_desc': {'required': False}, 'name': {'required': True}}

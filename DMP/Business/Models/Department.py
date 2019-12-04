@@ -9,6 +9,11 @@ class DepartmentManager(models.Manager):
         return self.get(id=department_id, business=business_id, delete_flag=0)
 
     def tree(self, business_id):
+        """
+        获取某个商户的部门树形结构
+        :param business_id:
+        :return:
+        """
         department_list = list(self.filter(business=business_id, delete_flag=0))
         department_dict = {}
         for department in department_list:
@@ -57,6 +62,11 @@ class DepartmentSerializer(serializers.ModelSerializer):
     children = serializers.SerializerMethodField()
 
     def get_children(self, obj):
+        """
+        自定义获取children数据
+        :param obj:
+        :return:
+        """
         if obj.children is None:
             return []
         else:
