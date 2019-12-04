@@ -49,5 +49,4 @@ class DepartmentService(BasicService):
 
     @classmethod
     def list(cls, business_id):
-        department_list = Department.objects.tree(business_id=business_id)
-        return None
+        return Department.objects.tree(business_id=business_id)

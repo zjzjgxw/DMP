@@ -1,7 +1,7 @@
 from django.db import models
 from DMP.Business.Models.BasicInfo import BasicInfo
 from DMP.Business.Models.User import User
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
 
 
 class DepartmentManager(models.Manager):
@@ -9,7 +9,17 @@ class DepartmentManager(models.Manager):
         return self.get(id=department_id, business=business_id, delete_flag=0)
 
     def tree(self, business_id):
-        return self.filter(business=business_id, delete_flag=0)
+        department_list = list(self.filter(business=business_id, delete_flag=0))
+        department_dict = {}
+        for department in department_list:
+            department_dict[department.id] = department
+        root_list = []
+        for department in department_list:
+            if department.parent_id == 0:
+                root_list.append(department)
+            else:
+                department_dict[department.parent_id].add_child(department)
+        return DepartmentSerializer(root_list, many=True).data
 
 
 class Department(models.Model):
@@ -24,7 +34,14 @@ class Department(models.Model):
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
     usrs = models.ManyToManyField(User, through='DepartmentUserRelation', through_fields=('department', 'user'))
+    children = None
     objects = DepartmentManager()
+
+    def add_child(self, obj):
+        if self.children is None:
+            self.children = [obj]
+        else:
+            self.children.append(obj)
 
 
 class DepartmentUserRelation(models.Model):
@@ -36,8 +53,16 @@ class DepartmentUserRelation(models.Model):
         db_table = 'business_user_department_relation'
 
 
-class DepartmentSerializer(ModelSerializer):
+class DepartmentSerializer(serializers.ModelSerializer):
+    children = serializers.SerializerMethodField()
+
+    def get_children(self, obj):
+        if obj.children is None:
+            return []
+        else:
+            return DepartmentSerializer(obj.children, many=True).data
+
     class Meta:
         model = Department
-        fields = ['id', 'name', 'parent_id', 'business', 'delete_flag']
+        fields = ['id', 'name', 'parent_id', 'business', 'children']
         extra_kwargs = {'name': {'required': True}}

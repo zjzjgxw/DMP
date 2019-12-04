@@ -14,8 +14,8 @@ class DepartmentViewSet(ViewSet):
     @auth_permission_required(["department_list"])
     def list(self, request):
         business_id = request.dmp_user['business_id']
-        DepartmentService.list(business_id)
-        return Response(return_format(200))
+        res = DepartmentService.list(business_id)
+        return Response(return_format(200, data=res))
 
     @auth_permission_required(["department_create"])
     def create(self, request):
