@@ -4,6 +4,11 @@ from DMP.Business.Models.Permission import Permission
 from rest_framework import serializers
 
 
+class PermissionRoleManager(models.Manager):
+    def detail(self, permission_role_id, business_id):
+        return self.get(id=permission_role_id, business=business_id, delete_flag=0)
+
+
 class PermissionRole(models.Model):
     """
     权限角色
@@ -17,6 +22,7 @@ class PermissionRole(models.Model):
     updated_at = models.DateTimeField("修改时间", auto_now=True)
     permissions = models.ManyToManyField(Permission, through='PermissionRoleRelation',
                                          through_fields=("role", "permission"))
+    objects = PermissionRoleManager()
 
     class Meta:
         db_table = 'business_permission_role'

@@ -22,3 +22,19 @@ class PermissionRoleService(BasicService):
             return role.id
         else:
             raise ValidationException(detail=serializer.errors)
+
+    @classmethod
+    def update(cls, name, role_desc, permission_role_id, business_id):
+        try:
+            permission_role = PermissionRole.objects.detail(permission_role_id=permission_role_id,
+                                                            business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        data = {"name": name}
+        if role_desc is not None:
+            data["role_desc"] = role_desc
+        serializer = PermissionRoleSerializer(instance=permission_role, data=data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationException(detail=serializer.errors)

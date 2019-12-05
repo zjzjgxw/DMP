@@ -3,6 +3,7 @@ from rest_framework.response import Response
 from DMP.Business.Service.PermissionRoleService import PermissionRoleService
 from DMP.Helps.func import return_format
 from DMP.Core.Token import auth_permission_required
+from DMP.Core.Exceptions import ValidationException
 
 
 class PermissionRoleViewSet(ViewSet):
@@ -22,8 +23,18 @@ class PermissionRoleViewSet(ViewSet):
     def retrieve(self, request, pk=None):
         pass
 
+    @auth_permission_required(["permission_role_update"])
     def update(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        if "name" not in request.data:
+            raise ValidationException()
+        if "role_desc" in request.data:
+            role_desc = request.data['role_desc']
+        else:
+            role_desc = None
+        name = request.data['name']
+        PermissionRoleService.update(name=name, role_desc=role_desc, permission_role_id=pk, business_id=business_id)
+        return Response(return_format(200, msg="修改成功"))
 
     def partial_update(self, request, pk=None):
         pass
