@@ -4,6 +4,7 @@ from DMP.Business.Service.PermissionRoleService import PermissionRoleService
 from DMP.Helps.func import return_format
 from DMP.Core.Token import auth_permission_required
 from DMP.Core.Exceptions import ValidationException
+from rest_framework.decorators import action
 
 
 class PermissionRoleViewSet(ViewSet):
@@ -47,3 +48,26 @@ class PermissionRoleViewSet(ViewSet):
         business_id = request.dmp_user['business_id']
         PermissionRoleService.delete(permission_role_id=pk, business_id=business_id)
         return Response(return_format(200, msg="删除成功"))
+
+    @action(methods=["get","post"], detail=True)
+    @auth_permission_required(["permission_role_permissions"])
+    def permissions(self, request, pk=None):
+        """
+        修改职位所拥有的权限
+        :param request:
+        :param pk:
+        :return:
+        """
+        business_id = request.dmp_user['business_id']
+        if request.method == "POST":
+            if "permission_ids" not in request.data:
+                raise ValidationException()
+            permission_ids = request.data['permission_ids']
+            if type(permission_ids) != list:
+                raise ValidationException(10007)
+            PermissionRoleService.add_permissions(permission_role_id=pk, business_id=business_id,
+                                                  permission_ids=permission_ids)
+            return Response(return_format(200))
+        elif request.method == "GET":
+            data = PermissionRoleService.permissions(permission_role_id=pk, business_id=business_id)
+            return Response(return_format(200, data=data))

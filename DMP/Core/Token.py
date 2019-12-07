@@ -1,6 +1,6 @@
 import jwt
 from .Exceptions import AuthFailedException
-
+from functools import wraps
 
 class JwtToken:
     secret_key = "123456"
@@ -21,8 +21,8 @@ def auth_permission_required(perms):
     :param perms:
     :return:
     """
-
     def decorator(func):
+        @wraps(func)
         def wrapper(view_set, request, *args, **kw):
             token = request.META.get('HTTP_AUTHORIZATION')
             jwt_object = JwtToken()

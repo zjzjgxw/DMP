@@ -1,7 +1,9 @@
 from DMP.Core.Service import BasicService
 from DMP.Core.Exceptions import ValidationException, ObjectDoesNotExistException
-from DMP.Business.Models.PermissionRole import PermissionRoleSerializer, PermissionRole
+from DMP.Business.Models.PermissionRole import PermissionRoleSerializer, PermissionRole, PermissionRoleRelation
 from django.core.exceptions import ObjectDoesNotExist
+from django.db import transaction
+from django.db import IntegrityError
 
 
 class PermissionRoleService(BasicService):
@@ -55,3 +57,35 @@ class PermissionRoleService(BasicService):
     @classmethod
     def list(cls, business_id):
         return PermissionRoleSerializer(PermissionRole.objects.filter(business_id=business_id), many=True).data
+
+    @classmethod
+    def permissions(cls, permission_role_id, business_id):
+        try:
+            permission_role = PermissionRole.objects.detail(permission_role_id=permission_role_id,
+                                                            business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        relations = PermissionRoleRelation.objects.filter(role=permission_role)
+        data = []
+        for relation in relations:
+            data.append(relation.permission_id)
+        return data
+
+    @classmethod
+    def add_permissions(cls, permission_role_id, business_id, permission_ids):
+        try:
+            PermissionRole.objects.detail(permission_role_id=permission_role_id,
+                                          business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        try:
+            with transaction.atomic('BusinessMysql'):
+                PermissionRoleRelation.objects.filter(role=permission_role_id).delete()
+                query_set_list = []
+                for permission_id in permission_ids:
+                    query_set_list.append(
+                        PermissionRoleRelation(role_id=permission_role_id, permission_id=permission_id))
+                PermissionRoleRelation.objects.bulk_create(query_set_list)
+                return True
+        except IntegrityError:
+            raise
