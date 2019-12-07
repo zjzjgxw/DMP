@@ -38,3 +38,20 @@ class PermissionRoleService(BasicService):
             serializer.save()
         else:
             raise ValidationException(detail=serializer.errors)
+
+    @classmethod
+    def delete(cls, permission_role_id, business_id):
+        try:
+            permission_role = PermissionRole.objects.detail(permission_role_id=permission_role_id,
+                                                            business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        serializer = PermissionRoleSerializer(instance=permission_role, data={"delete_flag": 1}, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            raise ValidationException(detail=serializer.errors)
+
+    @classmethod
+    def list(cls, business_id):
+        return PermissionRoleSerializer(PermissionRole.objects.filter(business_id=business_id), many=True).data

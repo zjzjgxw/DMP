@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework import serializers
 
 
 class PermissionGroup(models.Model):
@@ -13,3 +14,10 @@ class PermissionGroup(models.Model):
 
     class Meta:
         db_table = 'business_permission_group'
+
+
+class PermissionGroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PermissionGroup
+        fields = ['id', 'name', 'permission_desc']
+        extra_kwargs = {'permission_desc': {'required': False}, 'name': {'required': True}}

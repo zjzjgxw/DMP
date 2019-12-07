@@ -1,0 +1,50 @@
+[
+  {
+    "id": 1,
+    "business_permission_group_id": 1,
+    "name":"department_list",
+    "permission_desc": "部门列表"
+  },
+  {
+    "id": 2,
+    "business_permission_group_id": 1,
+    "name":"department_create",
+    "permission_desc": "创建部门"
+  },
+  {
+    "id": 3,
+    "business_permission_group_id": 1,
+    "name":"department_update",
+    "permission_desc": "修改部门"
+  },
+  {
+    "id": 4,
+    "business_permission_group_id": 1,
+    "name":"department_delete",
+    "permission_desc": "删除部门"
+  },
+  {
+    "id": 5,
+    "business_permission_group_id": 1,
+    "name":"permission_role_list",
+    "permission_desc": "职位列表"
+  },
+  {
+    "id": 6,
+    "business_permission_group_id": 1,
+    "name":"permission_role_create",
+    "permission_desc": "职位创建"
+  },
+  {
+    "id": 7,
+    "business_permission_group_id": 1,
+    "name":"permission_role_update",
+    "permission_desc": "职位更新"
+  },
+  {
+    "id": 8,
+    "business_permission_group_id": 1,
+    "name":"permission_role_delete",
+    "permission_desc": "删除职位"
+  }
+]

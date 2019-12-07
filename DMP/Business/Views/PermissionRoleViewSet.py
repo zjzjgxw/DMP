@@ -11,8 +11,11 @@ class PermissionRoleViewSet(ViewSet):
     职位视图
     """
 
+    @auth_permission_required(["permission_role_list"])
     def list(self, request):
-        pass
+        business_id = request.dmp_user['business_id']
+        data = PermissionRoleService.list(business_id)
+        return Response(return_format(200, data=data))
 
     @auth_permission_required(["permission_role_create"])
     def create(self, request):
@@ -39,5 +42,8 @@ class PermissionRoleViewSet(ViewSet):
     def partial_update(self, request, pk=None):
         pass
 
+    @auth_permission_required(["permission_role_delete"])
     def destroy(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        PermissionRoleService.delete(permission_role_id=pk, business_id=business_id)
+        return Response(return_format(200, msg="删除成功"))
