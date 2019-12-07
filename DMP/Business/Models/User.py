@@ -2,6 +2,7 @@ from django.db import models
 from DMP.Business.Models.BasicInfo import BasicInfo
 from DMP.Business.Models.PermissionRole import PermissionRole
 from rest_framework.serializers import ModelSerializer
+from django.contrib.auth.hashers import make_password, check_password
 
 
 class UserManager(models.Manager):
@@ -27,7 +28,7 @@ class User(models.Model):
     account = models.EmailField("账号名", max_length=100, default="")
     password = models.CharField("密码", max_length=100, default="")
     name = models.CharField("真实姓名", max_length=100, default="")
-    entry_date = models.DateField("入职日期", auto_now_add=True)
+    entry_date = models.DateField("入职日期")
     last_login = models.DateTimeField("最近登录时间", default='2019-08-04')
     last_ip = models.GenericIPAddressField("最近登录IP", default='')
     login_count = models.PositiveIntegerField("登录次数", default=0)
@@ -42,6 +43,9 @@ class User(models.Model):
                                               )
     objects = UserManager()
 
+    def check_password(self, password):
+        return check_password(password, self.password)
+
 
 class UserRoleRelation(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, db_constraint=False, db_column='business_user_id')
@@ -53,7 +57,15 @@ class UserRoleRelation(models.Model):
 
 
 class UserSerializer(ModelSerializer):
+    def create(self, validated_data):
+        user = User(**validated_data)
+        user.password = make_password(password=user.password)
+        user.save()
+        return user
+
     class Meta:
         model = User
         fields = ['id', 'account', 'password', 'name', 'entry_date', 'last_login', 'last_ip', 'login_count',
                   'sex', 'is_admin', 'is_active', 'business']
+        extra_kwargs = {'account': {'required': True}, 'password': {'required': True}, "name": {'required': True},
+                        "entry_date": {'required': True}}

@@ -12,12 +12,23 @@ class UserViewSet(ViewSet):
     用户视图
     """
 
-    @auth_permission_required(["user_list", "user_create"])
+    @auth_permission_required(["user_list"])
     def list(self, request):
         return Response(return_format(200))
 
+    @auth_permission_required(["user_create"])
     def create(self, request):
-        pass
+        business_id = request.dmp_user['business_id']
+        if "department_ids" not in request.data:
+            raise ValidationException()
+        if type(request.data["department_ids"]) != list:
+            raise ValidationException(10007)
+        if "role_ids" not in request.data:
+            raise ValidationException()
+        if type(request.data["role_ids"]) != list:
+            raise ValidationException(10007)
+        user_id = UserService.create_user(**request.data, business=business_id)
+        return Response(return_format(200, data={"id": user_id}))
 
     def retrieve(self, request, pk=None):
         pass
