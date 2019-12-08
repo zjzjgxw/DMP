@@ -5,6 +5,7 @@ from DMP.Helps.func import return_format
 from DMP.Core.Token import auth_permission_required
 from DMP.Core.Exceptions import ValidationException
 from rest_framework.decorators import action
+from DMP.Core.Paginate import PagePaginate
 
 
 class PermissionRoleViewSet(ViewSet):
@@ -15,7 +16,8 @@ class PermissionRoleViewSet(ViewSet):
     @auth_permission_required(["permission_role_list"])
     def list(self, request):
         business_id = request.dmp_user['business_id']
-        data = PermissionRoleService.list(business_id)
+        page_paginate = PagePaginate(request)
+        data = PermissionRoleService.list(business_id, page_paginate.page, page_paginate.page_size)
         return Response(return_format(200, data=data))
 
     @auth_permission_required(["permission_role_create"])
@@ -49,7 +51,7 @@ class PermissionRoleViewSet(ViewSet):
         PermissionRoleService.delete(permission_role_id=pk, business_id=business_id)
         return Response(return_format(200, msg="删除成功"))
 
-    @action(methods=["get","post"], detail=True)
+    @action(methods=["get", "post"], detail=True)
     @auth_permission_required(["permission_role_permissions"])
     def permissions(self, request, pk=None):
         """

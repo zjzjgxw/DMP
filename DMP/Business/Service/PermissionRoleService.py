@@ -55,8 +55,11 @@ class PermissionRoleService(BasicService):
             raise ValidationException(detail=serializer.errors)
 
     @classmethod
-    def list(cls, business_id):
-        return PermissionRoleSerializer(PermissionRole.objects.filter(business_id=business_id), many=True).data
+    def list(cls, business_id, page=1, page_size=10):
+        count = PermissionRole.objects.count(business_id)
+        role_list = PermissionRole.objects.list(business_id, page, page_size)
+        serializer = PermissionRoleSerializer(role_list, many=True)
+        return {"list": serializer.data, "count": count}
 
     @classmethod
     def permissions(cls, permission_role_id, business_id):

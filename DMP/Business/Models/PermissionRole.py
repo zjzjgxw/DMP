@@ -5,8 +5,25 @@ from rest_framework import serializers
 
 
 class PermissionRoleManager(models.Manager):
+    _count = -1
+
+    def count(self, business_id):
+        self._count = self.filter(business_id=business_id, delete_flag=0).count()
+        return self._count
+
     def detail(self, permission_role_id, business_id):
         return self.get(id=permission_role_id, business=business_id, delete_flag=0)
+
+    def list(self, business_id, page=1, page_size=10):
+        if page < 1:
+            page = 1
+        bottom = (page - 1) * page_size
+        top = bottom + page_size
+        if self._count == -1:
+            self._count = self.count(business_id)
+        if top > self._count:
+            top = self._count
+        return self.filter(business_id=business_id, delete_flag=0)[bottom: top]
 
 
 class PermissionRole(models.Model):
