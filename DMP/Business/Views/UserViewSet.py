@@ -11,10 +11,27 @@ class UserViewSet(ViewSet):
     """
     用户视图
     """
+    page = 1
+    page_size = 10
+
+    def _init_pagination(self, request):
+        if "page" in request.data:
+            self.page = request.data["page"]
+        if "page_size" in request.data:
+            self.page_size = request.data["page_size"]
+        if not isinstance(self.page, int):
+            raise ValidationException(10009)
+        if not isinstance(self.page_size, int):
+            raise ValidationException(10009)
+        if self.page < 1 or self.page_size <= 0:
+            raise ValidationException(10010)
 
     @auth_permission_required(["user_list"])
     def list(self, request):
-        return Response(return_format(200))
+        business_id = request.dmp_user['business_id']
+        self._init_pagination(request)
+        result = UserService.list(business_id, self.page, self.page_size)
+        return Response(return_format(200, data=result))
 
     @auth_permission_required(["user_create"])
     def create(self, request):

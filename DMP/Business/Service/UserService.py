@@ -80,3 +80,10 @@ class UserService(BasicService):
                 return user.id
         except IntegrityError:
             raise
+
+    @classmethod
+    def list(cls, business_id, page=1, page_size=10):
+        count = User.objects.count(business_id)
+        user_list = User.objects.list(business_id, page, page_size)
+        serializer = UserSerializer(user_list, many=True)
+        return {"list": serializer.data, "count": count}

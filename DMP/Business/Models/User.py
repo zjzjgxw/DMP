@@ -6,8 +6,25 @@ from django.contrib.auth.hashers import make_password, check_password
 
 
 class UserManager(models.Manager):
+    _count = -1
+
+    def count(self, business_id):
+        self._count = self.filter(business_id=business_id, delete_flag=0).count()
+        return self._count
+
     def get_user_by_account(self, account):
-        return self.get(account=account, is_active=1)
+        return self.get(account=account, delete_flag=0)
+
+    def list(self, business_id, page=1, page_size=10):
+        if page < 1:
+            page = 1
+        bottom = (page - 1) * page_size
+        top = bottom + page_size
+        if self._count == -1:
+            self._count = self.count(business_id)
+        if top > self._count:
+            top = self._count
+        return self.filter(business_id=business_id, delete_flag=0)[bottom: top]
 
 
 class User(models.Model):
@@ -44,6 +61,8 @@ class User(models.Model):
     objects = UserManager()
 
     def check_password(self, password):
+        if self.is_active == 0:
+            return False
         return check_password(password, self.password)
 
 
@@ -67,5 +86,6 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['id', 'account', 'password', 'name', 'entry_date', 'last_login', 'last_ip', 'login_count',
                   'sex', 'is_admin', 'is_active', 'business']
-        extra_kwargs = {'account': {'required': True}, 'password': {'required': True}, "name": {'required': True},
+        extra_kwargs = {'account': {'required': True}, 'password': {'required': True, 'write_only': True},
+                        "name": {'required': True},
                         "entry_date": {'required': True}}
