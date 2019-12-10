@@ -34,11 +34,17 @@ class UserViewSet(ViewSet):
         user_id = UserService.create_user(**request.data, business=business_id)
         return Response(return_format(200, data={"id": user_id}))
 
+    @auth_permission_required(['user_detail'])
     def retrieve(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        data = UserService.detail(pk, business_id)
+        return Response(return_format(200, data=data))
 
+    @auth_permission_required(['user_update'])
     def update(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        UserService.update(pk, business_id, **request.data)
+        return Response(return_format(200))
 
     def partial_update(self, request, pk=None):
         pass

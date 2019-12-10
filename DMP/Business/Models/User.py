@@ -86,6 +86,7 @@ class UserSerializer(ModelSerializer):
         model = User
         fields = ['id', 'account', 'password', 'name', 'entry_date', 'last_login', 'last_ip', 'login_count',
                   'sex', 'is_admin', 'is_active', 'business']
-        extra_kwargs = {'account': {'required': True}, 'password': {'required': True, 'write_only': True},
+        extra_kwargs = {'account': {'required': True, 'read_only': True},
+                        'password': {'required': True, 'write_only': True},
                         "name": {'required': True},
                         "entry_date": {'required': True}}

@@ -22,7 +22,7 @@ class UserService(BasicService):
         """
         password = '123456'
 
-        serializer = UserSerializer(data={"account": email, "business": business_id, "name": "admin",
+        serializer = UserSerializer(data={"account": email, "business": business_id, "name": "admin", "is_admin": 1,
                                           'password': password})
         if serializer.is_valid():
             serializer.save()
@@ -87,3 +87,99 @@ class UserService(BasicService):
         user_list = User.objects.list(business_id, page, page_size)
         serializer = UserSerializer(user_list, many=True)
         return {"list": serializer.data, "count": count}
+
+    @classmethod
+    def update(cls, user_id, business_id, **kwargs):
+        """
+        用户信息修改
+        :param user_id:
+        :param business_id:
+        :param kwargs:
+        :return:
+        """
+        fields = ["name", "entry_date", "sex"]
+        update_data = {}
+        for field in fields:
+            if field in kwargs:
+                update_data[field] = kwargs[field]
+        try:
+            user = User.objects.get(pk=user_id, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise UserNotExistException()
+
+        try:
+            with transaction.atomic("BusinessMysql"):
+                serializer = UserSerializer(user, update_data, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    raise ValidationException(detail=serializer.errors)
+                if "role_ids" in kwargs:
+                    if not isinstance(kwargs["role_ids"], list):
+                        raise ValidationException(10007)
+                    new_role_ids = set(kwargs["role_ids"])
+                    cls._update_role_relation(user_id, new_role_ids)
+                if "department_ids" in kwargs:
+                    if not isinstance(kwargs["department_ids"], list):
+                        raise ValidationException(10007)
+                    new_department_ids = set(kwargs["department_ids"])
+                    cls._update_department_relation(user_id, new_department_ids)
+        except IntegrityError:
+            raise
+        return True
+
+    @classmethod
+    def _update_department_relation(cls, user_id, new_department_ids):
+        """
+        更新用户-部门关系
+        :param user_id:
+        :param new_department_ids:
+        :return:
+        """
+        query_set = DepartmentUserRelation.objects.filter(user_id=user_id).values("department_id")
+        department_ids = set()
+        for item in query_set:
+            department_ids.add(item["department_id"])
+        if department_ids != new_department_ids:
+            DepartmentUserRelation.objects.filter(user_id=user_id).delete()
+            query_set_list = []
+            for new_id in new_department_ids:
+                query_set_list.append(DepartmentUserRelation(user_id=user_id, department_id=new_id))
+            DepartmentUserRelation.objects.bulk_create(query_set_list)
+
+    @classmethod
+    def _update_role_relation(cls, user_id, new_role_ids):
+        """
+        更新用户-职位关系
+        :param user_id:
+        :param new_role_ids:
+        :return:
+        """
+        query_set = UserRoleRelation.objects.filter(user_id=user_id).values("role_id")
+        role_ids = set()
+        for item in query_set:
+            role_ids.add(item["role_id"])
+        if role_ids != new_role_ids:
+            UserRoleRelation.objects.filter(user_id=user_id).delete()
+            query_set_list = []
+            for new_id in new_role_ids:
+                query_set_list.append(UserRoleRelation(user_id=user_id, role_id=new_id))
+            UserRoleRelation.objects.bulk_create(query_set_list)
+
+    @classmethod
+    def detail(cls, user_id, business_id):
+        try:
+            user = User.objects.get(pk=user_id, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise UserNotExistException()
+        serializer = UserSerializer(user)
+        data = serializer.data
+        query_set = UserRoleRelation.objects.filter(user_id=user_id)
+        data["role_ids"] = []
+        for item in query_set:
+            data["role_ids"].append(item.role_id)
+        query_set = DepartmentUserRelation.objects.filter(user_id=user_id)
+        data["departments"] = []
+        for item in query_set:
+            data["departments"].append(item.department_id)
+        return data

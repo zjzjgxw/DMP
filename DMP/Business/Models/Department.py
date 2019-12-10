@@ -38,7 +38,7 @@ class Department(models.Model):
     delete_flag = models.PositiveSmallIntegerField("删除标记", default=0)
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
-    usrs = models.ManyToManyField(User, through='DepartmentUserRelation', through_fields=('department', 'user'))
+    user = models.ManyToManyField(User, through='DepartmentUserRelation', through_fields=('department', 'user'))
     children = None
     objects = DepartmentManager()
 
