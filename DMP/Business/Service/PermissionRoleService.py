@@ -1,6 +1,7 @@
 from DMP.Core.Service import BasicService
 from DMP.Core.Exceptions import ValidationException, ObjectDoesNotExistException
 from DMP.Business.Models.PermissionRole import PermissionRoleSerializer, PermissionRole, PermissionRoleRelation
+from DMP.Business.Models.User import UserRoleRelation
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import transaction
 from django.db import IntegrityError
@@ -92,3 +93,42 @@ class PermissionRoleService(BasicService):
                 return True
         except IntegrityError:
             raise
+
+    @classmethod
+    def add_users(cls, permission_role_id: int, business_id: int, user_ids: list):
+        """
+        新增角色 - 用户关系
+        :param permission_role_id:
+        :param business_id:
+        :param user_ids:
+        :return:
+        """
+        try:
+            PermissionRole.objects.detail(permission_role_id=permission_role_id,
+                                          business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        try:
+            with transaction.atomic('BusinessMysql'):
+                UserRoleRelation.objects.filter(role=permission_role_id).delete()
+                query_set_list = []
+                for user_id in user_ids:
+                    query_set_list.append(
+                        UserRoleRelation(role_id=permission_role_id, user_id=user_id))
+                UserRoleRelation.objects.bulk_create(query_set_list)
+                return True
+        except IntegrityError:
+            raise
+
+    @classmethod
+    def users(cls, permission_role_id, business_id):
+        try:
+            permission_role = PermissionRole.objects.detail(permission_role_id=permission_role_id,
+                                                            business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        relations = UserRoleRelation.objects.filter(role=permission_role)
+        data = []
+        for relation in relations:
+            data.append(relation.user_id)
+        return data

@@ -73,3 +73,26 @@ class PermissionRoleViewSet(ViewSet):
         elif request.method == "GET":
             data = PermissionRoleService.permissions(permission_role_id=pk, business_id=business_id)
             return Response(return_format(200, data=data))
+
+    @action(methods=["get", "post"], detail=True)
+    @auth_permission_required(["permission_role_users"])
+    def users(self, request, pk=None):
+        """
+        修改职位所拥有的权限
+        :param request:
+        :param pk:
+        :return:
+        """
+        business_id = request.dmp_user['business_id']
+        if request.method == "POST":
+            if "user_ids" not in request.data:
+                raise ValidationException()
+            user_ids = request.data['user_ids']
+            if type(user_ids) != list:
+                raise ValidationException(10007)
+            PermissionRoleService.add_users(permission_role_id=pk, business_id=business_id,
+                                            user_ids=user_ids)
+            return Response(return_format(200))
+        elif request.method == "GET":
+            data = PermissionRoleService.users(permission_role_id=pk, business_id=business_id)
+            return Response(return_format(200, data=data))
