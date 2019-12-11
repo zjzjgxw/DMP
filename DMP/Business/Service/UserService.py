@@ -1,7 +1,8 @@
 from DMP.Business.Models.User import UserSerializer, User, UserRoleRelation
 from DMP.Business.Models.Department import DepartmentUserRelation
 from DMP.Core.Service import BasicService
-from DMP.Core.Exceptions import ValidationException, UserNotExistException, AccountPasswordWrongException
+from DMP.Core.Exceptions import ValidationException, UserNotExistException, AccountPasswordWrongException, \
+    PermissionFailException
 from django.core.exceptions import ObjectDoesNotExist
 from DMP.Core.Token import JwtToken
 from django.db import transaction, IntegrityError
@@ -45,7 +46,8 @@ class UserService(BasicService):
         res = user.check_password(password)
         if res:
             jwt = JwtToken()
-            token = jwt.get_token(id=user.id, name=user.name, account=user.account, business_id=user.business_id)
+            token = jwt.get_token(id=user.id, name=user.name, account=user.account, business_id=user.business_id,
+                                  is_admin=user.is_admin, is_active=user.is_active)
             return token
         else:
             raise AccountPasswordWrongException()
@@ -97,11 +99,6 @@ class UserService(BasicService):
         :param kwargs:
         :return:
         """
-        fields = ["name", "entry_date", "sex"]
-        update_data = {}
-        for field in fields:
-            if field in kwargs:
-                update_data[field] = kwargs[field]
         try:
             user = User.objects.get(pk=user_id, business_id=business_id)
         except ObjectDoesNotExist:
@@ -109,7 +106,7 @@ class UserService(BasicService):
 
         try:
             with transaction.atomic("BusinessMysql"):
-                serializer = UserSerializer(user, update_data, partial=True)
+                serializer = UserSerializer(user, kwargs, partial=True)
                 if serializer.is_valid():
                     serializer.save()
                 else:
@@ -183,3 +180,16 @@ class UserService(BasicService):
         for item in query_set:
             data["departments"].append(item.department_id)
         return data
+
+    @classmethod
+    def has_permissions(cls, user_id: int, permissions: list):
+        query_set = UserRoleRelation.objects.filter(user_id=user_id)
+        permission_set = set()
+        for item in query_set:
+            role = item.role
+            for permission in role.permissions.all():
+                permission_set.add(permission.name)
+        for item in permissions:
+            if item not in permission_set:
+                raise PermissionFailException()
+        return True

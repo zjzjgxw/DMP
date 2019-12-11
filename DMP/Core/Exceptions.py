@@ -71,3 +71,10 @@ class ObjectDoesNotExistException(CustomException):
     查找不到对应信息
     """
     msg_code = 999
+
+
+class PermissionFailException(CustomException):
+    """
+    权限不足
+    """
+    msg_code = 10011

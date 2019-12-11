@@ -2,6 +2,7 @@ import jwt
 from .Exceptions import AuthFailedException
 from functools import wraps
 
+
 class JwtToken:
     secret_key = "123456"
 
@@ -15,12 +16,13 @@ class JwtToken:
             raise AuthFailedException()
 
 
-def auth_permission_required(perms):
+def auth_permission_required(perms=[]):
     """
     登录权限验证
     :param perms:
     :return:
     """
+
     def decorator(func):
         @wraps(func)
         def wrapper(view_set, request, *args, **kw):
@@ -28,6 +30,12 @@ def auth_permission_required(perms):
             jwt_object = JwtToken()
             user = jwt_object.get_info(token)
             request.dmp_user = user
+            if user["is_active"] != 1:
+                raise AuthFailedException()
+            if user["is_admin"] != 1:
+                from DMP.Business.Service.UserService import UserService
+                UserService.has_permissions(user["id"], perms)
+
             return func(view_set, request, *args, **kw)
 
         return wrapper
