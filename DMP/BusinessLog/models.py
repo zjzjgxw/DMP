@@ -23,7 +23,7 @@ class LogSerializer(ModelSerializer):
     """日志序列化器"""
 
     def validate_models_name(self, models_name):
-        if len(models_name) > 10:
+        if len(models_name) > 20:
             raise ValidationError("模块名太长")
         return models_name
 

@@ -2,6 +2,8 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from DMP.Business.Service.BusinessService import BusinessService
 from DMP.Helps.func import return_format
+from rest_framework.decorators import action
+from DMP.Core.Token import auth_permission_required
 
 
 class BusinessViewSet(ViewSet):
@@ -28,3 +30,15 @@ class BusinessViewSet(ViewSet):
     def destroy(self, request, pk=None):
         pass
 
+    @action(methods=["get"], detail=False)
+    @auth_permission_required(["business_permission_list"])
+    def permissions(self, request):
+        business_id = request.dmp_user['business_id']
+        data = BusinessService.permissions(business_id=business_id)
+        return Response(return_format(200, data=data))
+
+    @action(methods=["get"], detail=False)
+    @auth_permission_required(["business_group_list"])
+    def groups(self, request):
+        data = BusinessService.groups()
+        return Response(return_format(200, data=data))

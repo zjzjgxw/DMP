@@ -1,10 +1,11 @@
-from DMP.Business.Models.BasicInfo import BusinessSerializer
+from DMP.Business.Models.BasicInfo import BusinessSerializer, BasicInfo
 from DMP.Core.Service import BasicService
-from DMP.Core.Exceptions import ValidationException
+from DMP.Core.Exceptions import ValidationException, ObjectDoesNotExistException
 from DMP.Business.Service.UserService import UserService
 from django.db import transaction
 from django.db import IntegrityError
 from DMP.Business.Models.BusinessAuthInfo import BusinessAuthInfoSerializer
+from django.core.exceptions import ObjectDoesNotExist
 
 
 class BusinessService(BasicService):
@@ -47,3 +48,19 @@ class BusinessService(BasicService):
         else:
             raise ValidationException(detail=serializer.errors)
         return True
+
+    @classmethod
+    def permissions(cls, business_id):
+        try:
+            obj = BasicInfo.objects.get(pk=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        data = obj.permissions.all().values("id", "group", "name", "permission_desc")
+        return data
+
+    @classmethod
+    def groups(cls):
+        from DMP.Business.Models.PermissionGroup import PermissionGroupSerializer, PermissionGroup
+        query_set = PermissionGroup.objects.filter(delete_flag=0)
+        serializer = PermissionGroupSerializer(query_set, many=True)
+        return serializer.data
