@@ -1,6 +1,11 @@
 from django.db import models
 from rest_framework import serializers
 from DMP.Business.Models.BasicInfo import BasicInfo
+from DMP.Core.Paginate import PageManager
+
+
+class VendorManager(PageManager):
+    pass
 
 
 class Vendor(models.Model):
@@ -22,6 +27,8 @@ class Vendor(models.Model):
     delete_flag = models.PositiveSmallIntegerField("删除标记", default=0)
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
+
+    objects = VendorManager()
 
 
 class VendorSerializer(serializers.ModelSerializer):

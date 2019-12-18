@@ -1,4 +1,5 @@
 from DMP.Core.Exceptions import ValidationException
+from django.db import models
 
 
 class PagePaginate:
@@ -16,3 +17,22 @@ class PagePaginate:
             raise ValidationException(10009)
         if self.page < 1 or self.page_size <= 0:
             raise ValidationException(10010)
+
+
+class PageManager(models.Manager):
+    _count = -1
+
+    def count(self, business_id):
+        self._count = self.filter(business_id=business_id, delete_flag=0).count()
+        return self._count
+
+    def list(self, business_id, page=1, page_size=10):
+        if page < 1:
+            page = 1
+        bottom = (page - 1) * page_size
+        top = bottom + page_size
+        if self._count == -1:
+            self._count = self.count(business_id)
+        if top > self._count:
+            top = self._count
+        return self.filter(business_id=business_id, delete_flag=0)[bottom: top]

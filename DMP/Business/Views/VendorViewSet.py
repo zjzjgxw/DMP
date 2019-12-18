@@ -17,7 +17,7 @@ class VendorViewSet(ViewSet):
     def list(self, request):
         business_id = request.dmp_user['business_id']
         page_paginate = PagePaginate(request)
-        result = UserService.list(business_id, page_paginate.page, page_paginate.page_size)
+        result = VendorService.list(business_id, page_paginate.page, page_paginate.page_size)
         return Response(return_format(200, data=result))
 
     @auth_permission_required(["vendor_list"])
@@ -26,13 +26,13 @@ class VendorViewSet(ViewSet):
         vendor_id = VendorService.create(**request.data, business=business_id)
         return Response(return_format(200, data={"id": vendor_id}))
 
-    @auth_permission_required(['user_detail'])
+    @auth_permission_required(['vendor_detail'])
     def retrieve(self, request, pk=None):
         business_id = request.dmp_user['business_id']
         data = UserService.detail(pk, business_id)
         return Response(return_format(200, data=data))
 
-    @auth_permission_required(['user_update'])
+    @auth_permission_required(['vendor_update'])
     def update(self, request, pk=None):
         business_id = request.dmp_user['business_id']
         UserService.update(pk, business_id, **request.data)
