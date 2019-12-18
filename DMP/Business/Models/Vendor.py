@@ -8,7 +8,7 @@ class Vendor(models.Model):
     供应商
     """
     business = models.ForeignKey(BasicInfo, on_delete=models.CASCADE, db_column='business_basic_id',
-                                    db_constraint=False)
+                                 db_constraint=False)
     name = models.CharField("供应商名称", max_length=30, default="")
     unique_code = models.CharField("企业统一编码", max_length=30, default="")
     img_id = models.BigIntegerField("企业营业执照文件id", default=0)
@@ -29,5 +29,6 @@ class VendorSerializer(serializers.ModelSerializer):
         model = Vendor
         fields = ['id', 'name', 'unique_code', "business", "img_id", "linkman", "linkman_tel", "email", "country_id",
                   "state_id", "city_id", "address"]
-        extra_kwargs = {'name': {'required': True}, 'unique_code': {'required': True}, 'linkman': {'required': True},
+        extra_kwargs = {'name': {'required': True}, 'unique_code': {'required': True}, 'img_id': {'required': True},
+                        'linkman': {'required': True},
                         'linkman_tel': {'required': True}, 'email': {'required': True}}
