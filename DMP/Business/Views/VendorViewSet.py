@@ -40,5 +40,9 @@ class VendorViewSet(ViewSet):
     def partial_update(self, request, pk=None):
         pass
 
+    @auth_permission_required(['vendor_delete'])
     def destroy(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        VendorService.delete(pk, business_id)
+        return Response(return_format(200))
+

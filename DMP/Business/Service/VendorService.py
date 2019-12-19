@@ -51,3 +51,13 @@ class VendorService(BasicService):
             return True
         else:
             raise ValidationException(detail=serializer.errors)
+
+    @classmethod
+    def delete(cls, pk, business_id):
+        try:
+            vendor = Vendor.objects.get(pk=pk, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        vendor.delete_flag = 1
+        vendor.save()
+        return True
