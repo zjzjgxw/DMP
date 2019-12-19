@@ -40,4 +40,5 @@ class VendorBankAccountSerializer(serializers.ModelSerializer):
                   "district_code"]
         extra_kwargs = {'account_type': {'required': True}, 'company_name': {'required': True},
                         'company_address': {'required': True}, 'bank_name': {'required': True},
-                        'bank_address': {'required': True}, 'bank_account': {'required': True}}
+                        'bank_address': {'required': True}, 'bank_account': {'required': True},
+                        "vendor": {'required': True}}

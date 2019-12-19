@@ -4,6 +4,7 @@ from DMP.Business.Views.UserViewSet import UserViewSet
 from DMP.Business.Views.DepartmentViewSet import DepartmentViewSet
 from DMP.Business.Views.PermissionRoleViewSet import PermissionRoleViewSet
 from DMP.Business.Views.VendorViewSet import VendorViewSet
+from DMP.Business.Views.VendorBankAccountViewSet import VendorBankAccountViewSet
 from rest_framework import routers
 
 router = routers.SimpleRouter()
@@ -13,5 +14,6 @@ router.register(r'user', UserViewSet, base_name="UserView")
 router.register(r'department', DepartmentViewSet, base_name="DepartmentView")
 router.register(r'permission_role', PermissionRoleViewSet, base_name="PermissionRoleView")
 router.register(r'vendor', VendorViewSet, base_name="VendorView")
+router.register(r'vendor_bank_account', VendorBankAccountViewSet, base_name="VendorBankAccountView")
 
 urlpatterns = router.urls

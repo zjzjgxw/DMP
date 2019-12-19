@@ -45,6 +45,8 @@ class VendorService(BasicService):
             vendor = Vendor.objects.get(pk=pk, business_id=business_id)
         except ObjectDoesNotExist:
             raise ObjectDoesNotExistException()
+        if "business" in kwargs:
+            del kwargs["business"]
         serializer = VendorSerializer(vendor, kwargs, partial=True)
         if serializer.is_valid():
             serializer.save()
