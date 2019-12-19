@@ -2,7 +2,6 @@ from rest_framework.viewsets import ViewSet
 from rest_framework.response import Response
 from DMP.Helps.func import return_format
 from rest_framework.decorators import action
-from DMP.Business.Service.UserService import UserService
 from DMP.Core.Token import auth_permission_required
 from DMP.Core.Paginate import PagePaginate
 from DMP.Business.Service.VendorService import VendorService
@@ -29,13 +28,13 @@ class VendorViewSet(ViewSet):
     @auth_permission_required(['vendor_detail'])
     def retrieve(self, request, pk=None):
         business_id = request.dmp_user['business_id']
-        data = UserService.detail(pk, business_id)
+        data = VendorService.detail(pk, business_id)
         return Response(return_format(200, data=data))
 
     @auth_permission_required(['vendor_update'])
     def update(self, request, pk=None):
         business_id = request.dmp_user['business_id']
-        UserService.update(pk, business_id, **request.data)
+        VendorService.update(pk, business_id, **request.data)
         return Response(return_format(200))
 
     def partial_update(self, request, pk=None):

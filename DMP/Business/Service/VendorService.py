@@ -1,7 +1,7 @@
 from DMP.Business.Models.Vendor import VendorSerializer, Vendor
 from DMP.Core.Service import BasicService
-from DMP.Core.Exceptions import ValidationException
-from django.db import transaction, IntegrityError
+from django.core.exceptions import ObjectDoesNotExist
+from DMP.Core.Exceptions import ValidationException, ObjectDoesNotExistException
 
 
 class VendorService(BasicService):
@@ -29,3 +29,25 @@ class VendorService(BasicService):
         vendor_list = Vendor.objects.list(business_id, page, page_size)
         serializer = VendorSerializer(vendor_list, many=True)
         return {"list": serializer.data, "count": count}
+
+    @classmethod
+    def detail(cls, pk, business_id):
+        try:
+            vendor = Vendor.objects.get(pk=pk, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        serializer = VendorSerializer(vendor)
+        return serializer.data
+
+    @classmethod
+    def update(cls, pk, business_id, **kwargs):
+        try:
+            vendor = Vendor.objects.get(pk=pk, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        serializer = VendorSerializer(vendor, kwargs, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return True
+        else:
+            raise ValidationException(detail=serializer.errors)

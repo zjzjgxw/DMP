@@ -38,4 +38,4 @@ class VendorSerializer(serializers.ModelSerializer):
                   "state_id", "city_id", "address"]
         extra_kwargs = {'name': {'required': True}, 'unique_code': {'required': True}, 'img_id': {'required': True},
                         'linkman': {'required': True},
-                        'linkman_tel': {'required': True}, 'email': {'required': True}}
+                        'linkman_tel': {'required': True}, 'email': {'required': True}, "business": {'read_only': True}}
