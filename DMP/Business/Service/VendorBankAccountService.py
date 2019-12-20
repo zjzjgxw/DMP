@@ -24,12 +24,11 @@ class VendorBankAccountService(BasicService):
             raise ValidationException(detail=serializer.errors)
 
     @classmethod
-    def list(cls, business_id, page=1, page_size=10):
-        pass
-        # count = Vendor.objects.count(business_id)
-        # vendor_list = Vendor.objects.list(business_id, page, page_size)
-        # serializer = VendorSerializer(vendor_list, many=True)
-        # return {"list": serializer.data, "count": count}
+    def list(cls, vendor_id, page=1, page_size=10):
+        count = VendorBankAccount.objects.count(vendor_id=vendor_id)
+        bank_account_list = VendorBankAccount.objects.list(page, page_size, vendor_id=vendor_id)
+        serializer = VendorBankAccountSerializer(bank_account_list, many=True)
+        return {"list": serializer.data, "count": count}
 
     @classmethod
     def detail(cls, pk, business_id):

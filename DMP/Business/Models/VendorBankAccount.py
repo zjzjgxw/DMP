@@ -1,6 +1,7 @@
 from django.db import models
 from rest_framework import serializers
 from DMP.Business.Models.Vendor import Vendor
+from DMP.Core.Paginate import PageManager
 
 
 class VendorBankAccount(models.Model):
@@ -27,6 +28,7 @@ class VendorBankAccount(models.Model):
     delete_flag = models.PositiveSmallIntegerField("删除标记", default=0)
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
+    objects = PageManager()
 
     class Meta:
         db_table = 'business_vendor_bank_account'

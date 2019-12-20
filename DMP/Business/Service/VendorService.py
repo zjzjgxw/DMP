@@ -25,8 +25,8 @@ class VendorService(BasicService):
 
     @classmethod
     def list(cls, business_id, page=1, page_size=10):
-        count = Vendor.objects.count(business_id)
-        vendor_list = Vendor.objects.list(business_id, page, page_size)
+        count = Vendor.objects.count(business_id=business_id)
+        vendor_list = Vendor.objects.list(page, page_size, business_id=business_id)
         serializer = VendorSerializer(vendor_list, many=True)
         return {"list": serializer.data, "count": count}
 
