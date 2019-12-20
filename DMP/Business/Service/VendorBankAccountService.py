@@ -6,13 +6,13 @@ from DMP.Core.Exceptions import ValidationException, ObjectDoesNotExistException
 
 class VendorBankAccountService(BasicService):
     """
-    供应商服务
+    供应商银行账户服务
     """
 
     @classmethod
     def create(cls, **kwargs):
         """
-        创建供应商
+        创建供应商银行账户
         :param kwargs:
         :return:
         """
@@ -31,36 +31,33 @@ class VendorBankAccountService(BasicService):
         return {"list": serializer.data, "count": count}
 
     @classmethod
-    def detail(cls, pk, business_id):
-        pass
-        # try:
-        #     vendor = Vendor.objects.get(pk=pk, business_id=business_id)
-        # except ObjectDoesNotExist:
-        #     raise ObjectDoesNotExistException()
-        # serializer = VendorSerializer(vendor)
-        # return serializer.data
+    def detail(cls, pk, vendor_id):
+        try:
+            obj = VendorBankAccount.objects.get(pk=pk, vendor=vendor_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        serializer = VendorBankAccountSerializer(obj)
+        return serializer.data
 
     @classmethod
-    def update(cls, pk, business_id, **kwargs):
-        pass
-        # try:
-        #     vendor = Vendor.objects.get(pk=pk, business_id=business_id)
-        # except ObjectDoesNotExist:
-        #     raise ObjectDoesNotExistException()
-        # serializer = VendorSerializer(vendor, kwargs, partial=True)
-        # if serializer.is_valid():
-        #     serializer.save()
-        #     return True
-        # else:
-        #     raise ValidationException(detail=serializer.errors)
+    def update(cls, pk, vendor_id, **kwargs):
+        try:
+            obj = VendorBankAccount.objects.get(pk=pk, vendor=vendor_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        serializer = VendorBankAccountSerializer(obj, kwargs, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return True
+        else:
+            raise ValidationException(detail=serializer.errors)
 
     @classmethod
-    def delete(cls, pk, business_id):
-        pass
-        # try:
-        #     vendor = Vendor.objects.get(pk=pk, business_id=business_id)
-        # except ObjectDoesNotExist:
-        #     raise ObjectDoesNotExistException()
-        # vendor.delete_flag = 1
-        # vendor.save()
-        # return True
+    def delete(cls, pk, vendor_id):
+        try:
+            obj = VendorBankAccount.objects.get(pk=pk, vendor=vendor_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        obj.delete_flag = 1
+        obj.save()
+        return True

@@ -30,24 +30,34 @@ class VendorBankAccountViewSet(ViewSet):
 
     @auth_permission_required(['vendor_detail'])
     def retrieve(self, request, pk=None):
-        pass
-        # business_id = request.dmp_user['business_id']
-        # data = VendorService.detail(pk, business_id)
-        # return Response(return_format(200, data=data))
+        if "vendor_id" not in request.data:
+            raise ValidationException()
+        vendor_id = request.data["vendor_id"]
+        if not isinstance(vendor_id, int):
+            raise ValidationException(10009)
+        data = VendorBankAccountService.detail(pk, vendor_id)
+        return Response(return_format(200, data=data))
 
     @auth_permission_required(['vendor_update'])
     def update(self, request, pk=None):
-        pass
-        # business_id = request.dmp_user['business_id']
-        # VendorService.update(pk, business_id, **request.data)
-        # return Response(return_format(200))
+        if "vendor_id" not in request.data:
+            raise ValidationException()
+        vendor_id = request.data["vendor_id"]
+        del request.data["vendor_id"]
+        if not isinstance(vendor_id, int):
+            raise ValidationException(10009)
+        VendorBankAccountService.update(pk, vendor_id, **request.data)
+        return Response(return_format(200))
 
     def partial_update(self, request, pk=None):
         pass
 
     @auth_permission_required(['vendor_delete'])
     def destroy(self, request, pk=None):
-        pass
-        # business_id = request.dmp_user['business_id']
-        # VendorService.delete(pk, business_id)
-        # return Response(return_format(200))
+        if "vendor_id" not in request.data:
+            raise ValidationException()
+        vendor_id = request.data["vendor_id"]
+        if not isinstance(vendor_id, int):
+            raise ValidationException(10009)
+        VendorBankAccountService.delete(pk, vendor_id)
+        return Response(return_format(200))
