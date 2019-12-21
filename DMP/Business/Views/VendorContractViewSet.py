@@ -4,15 +4,15 @@ from DMP.Helps.func import return_format
 from DMP.Core.Token import auth_permission_required
 from DMP.Core.Paginate import PagePaginate
 from DMP.Core.Exceptions import ValidationException
-from DMP.Business.Service.VendorBankAccountService import VendorBankAccountService
+from DMP.Business.Service.VendorContractService import VendorContractService
 
 
-class VendorBankAccountViewSet(ViewSet):
+class VendorContractViewSet(ViewSet):
     """
-    供应商视图
+    供应商合同视图
     """
 
-    @auth_permission_required(["vendor_bank_account_list"])
+    @auth_permission_required(["vendor_contract_list"])
     def list(self, request):
         if "vendor_id" not in request.data:
             raise ValidationException()
@@ -20,25 +20,25 @@ class VendorBankAccountViewSet(ViewSet):
         if not isinstance(vendor_id, int):
             raise ValidationException(10009)
         page_paginate = PagePaginate(request)
-        result = VendorBankAccountService.list(vendor_id, page_paginate.page, page_paginate.page_size)
+        result = VendorContractService.list(vendor_id, page_paginate.page, page_paginate.page_size)
         return Response(return_format(200, data=result))
 
-    @auth_permission_required(["vendor_bank_account_list"])
+    @auth_permission_required(["vendor_contract_list"])
     def create(self, request):
-        bank_account_id = VendorBankAccountService.create(**request.data)
+        bank_account_id = VendorContractService.create(**request.data)
         return Response(return_format(200, data={"id": bank_account_id}))
 
-    @auth_permission_required(['vendor_detail'])
+    @auth_permission_required(['vendor_contact_detail'])
     def retrieve(self, request, pk=None):
         if "vendor_id" not in request.data:
             raise ValidationException()
         vendor_id = request.data["vendor_id"]
         if not isinstance(vendor_id, int):
             raise ValidationException(10009)
-        data = VendorBankAccountService.detail(pk, vendor_id)
+        data = VendorContractService.detail(pk, vendor_id)
         return Response(return_format(200, data=data))
 
-    @auth_permission_required(['vendor_bank_account_update'])
+    @auth_permission_required(['vendor_contract_update'])
     def update(self, request, pk=None):
         if "vendor_id" not in request.data:
             raise ValidationException()
@@ -46,18 +46,18 @@ class VendorBankAccountViewSet(ViewSet):
         del request.data["vendor_id"]
         if not isinstance(vendor_id, int):
             raise ValidationException(10009)
-        VendorBankAccountService.update(pk, vendor_id, **request.data)
+        VendorContractService.update(pk, vendor_id, **request.data)
         return Response(return_format(200))
 
     def partial_update(self, request, pk=None):
         pass
 
-    @auth_permission_required(['vendor_bank_account_delete'])
+    @auth_permission_required(['vendor_contract_delete'])
     def destroy(self, request, pk=None):
         if "vendor_id" not in request.data:
             raise ValidationException()
         vendor_id = request.data["vendor_id"]
         if not isinstance(vendor_id, int):
             raise ValidationException(10009)
-        VendorBankAccountService.delete(pk, vendor_id)
+        VendorContractService.delete(pk, vendor_id)
         return Response(return_format(200))
