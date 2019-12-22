@@ -61,3 +61,11 @@ class VendorContractService(BasicService):
         obj.delete_flag = 1
         obj.save()
         return True
+
+    @classmethod
+    def active(cls, pk):
+        """
+        生效合同
+        :param pk:
+        :return:
+        """
