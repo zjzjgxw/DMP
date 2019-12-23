@@ -5,6 +5,7 @@ from DMP.Core.Token import auth_permission_required
 from DMP.Core.Paginate import PagePaginate
 from DMP.Core.Exceptions import ValidationException
 from DMP.Business.Service.VendorContractService import VendorContractService
+from rest_framework.decorators import action
 
 
 class VendorContractViewSet(ViewSet):
@@ -61,3 +62,47 @@ class VendorContractViewSet(ViewSet):
             raise ValidationException(10009)
         VendorContractService.delete(pk, vendor_id)
         return Response(return_format(200))
+
+    @action(methods=["post"], detail=True)
+    @auth_permission_required(["vendor_contract_refuse"])
+    def refuse(self, request, pk=None):
+        if "vendor_id" not in request.data:
+            raise ValidationException()
+        vendor_id = request.data["vendor_id"]
+        if not isinstance(vendor_id, int):
+            raise ValidationException(10009)
+        res = VendorContractService.refuse(pk, vendor_id)
+        return Response(return_format(200, '', data={"result": res}))
+
+    @action(methods=["post"], detail=True)
+    @auth_permission_required(["vendor_contract_verify"])
+    def verify(self, request, pk=None):
+        if "vendor_id" not in request.data:
+            raise ValidationException()
+        vendor_id = request.data["vendor_id"]
+        if not isinstance(vendor_id, int):
+            raise ValidationException(10009)
+        res = VendorContractService.verify(pk, vendor_id)
+        return Response(return_format(200, '', data={"result": res}))
+
+    @action(methods=["post"], detail=True)
+    @auth_permission_required(["vendor_contract_approve"])
+    def approve(self, request, pk=None):
+        if "vendor_id" not in request.data:
+            raise ValidationException()
+        vendor_id = request.data["vendor_id"]
+        if not isinstance(vendor_id, int):
+            raise ValidationException(10009)
+        res = VendorContractService.approve(pk, vendor_id)
+        return Response(return_format(200, '', data={"result": res}))
+
+    @action(methods=["post"], detail=True)
+    @auth_permission_required(["vendor_contract_invalid"])
+    def invalid(self, request, pk=None):
+        if "vendor_id" not in request.data:
+            raise ValidationException()
+        vendor_id = request.data["vendor_id"]
+        if not isinstance(vendor_id, int):
+            raise ValidationException(10009)
+        res = VendorContractService.invalid(pk, vendor_id)
+        return Response(return_format(200, '', data={"result": res}))

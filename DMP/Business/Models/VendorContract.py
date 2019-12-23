@@ -23,28 +23,28 @@ class ContractStatus:
         审核合同
         :return:
         """
-        pass
+        return False
 
     def refuse(self):
         """
         拒绝合同
         :return:
         """
-        pass
+        return False
 
     def approve(self):
         """
         批准
         :return:
         """
-        pass
+        return False
 
     def invalid(self):
         """
         作废
         :return:
         """
-        pass
+        return False
 
 
 class InvalidStatus(ContractStatus):
@@ -55,6 +55,8 @@ class InvalidStatus(ContractStatus):
 
     def verify(self):
         self.instance.set_status(self.instance.verifying_status)
+        self.instance.save()
+        return True
 
 
 class VerifyingStatus(ContractStatus):
@@ -65,9 +67,13 @@ class VerifyingStatus(ContractStatus):
 
     def refuse(self):
         self.instance.set_status(self.instance.verify_failed_status)
+        self.instance.save()
+        return True
 
     def approve(self):
         self.instance.set_status(self.instance.valid_status)
+        self.instance.save()
+        return True
 
 
 class VerifyFailedStatus(ContractStatus):
@@ -78,6 +84,8 @@ class VerifyFailedStatus(ContractStatus):
 
     def verify(self):
         self.instance.set_status(self.instance.verifying_status)
+        self.instance.save()
+        return True
 
 
 class ValidStatus(ContractStatus):
@@ -88,6 +96,8 @@ class ValidStatus(ContractStatus):
 
     def invalid(self):
         self.instance.set_status(self.instance.invalid_status)
+        self.instance.save()
+        return True
 
 
 class VendorContract(models.Model):
@@ -149,6 +159,34 @@ class VendorContract(models.Model):
     def set_status(self, obj: ContractStatus):
         self.current_status = obj
         self.status = obj.code
+
+    def verify(self):
+        """
+        审核
+        :return:
+        """
+        return self.current_status.verify()
+
+    def refuse(self):
+        """
+        拒绝审核信息
+        :return:
+        """
+        return self.current_status.refuse()
+
+    def approve(self):
+        """
+        审核通过
+        :return:
+        """
+        return self.current_status.approve()
+
+    def invalid(self):
+        """
+        失效合同
+        :return:
+        """
+        return self.current_status.invalid()
 
     class Meta:
         db_table = 'business_vendor_contract'

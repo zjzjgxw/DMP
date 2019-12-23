@@ -63,9 +63,57 @@ class VendorContractService(BasicService):
         return True
 
     @classmethod
-    def active(cls, pk):
+    def verify(cls, pk, vendor_id):
         """
-        生效合同
+        审核合同
         :param pk:
+        :param vendor_id:
         :return:
         """
+        try:
+            obj = VendorContract.objects.get(pk=pk, vendor=vendor_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        return obj.verify()
+
+    @classmethod
+    def refuse(cls, pk, vendor_id):
+        """
+        拒绝审核
+        :param pk:
+        :param vendor_id:
+        :return:
+        """
+        try:
+            obj = VendorContract.objects.get(pk=pk, vendor=vendor_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        return obj.refuse()
+
+    @classmethod
+    def approve(cls, pk, vendor_id):
+        """
+        通过审核
+        :param pk:
+        :param vendor_id:
+        :return:
+        """
+        try:
+            obj = VendorContract.objects.get(pk=pk, vendor=vendor_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        return obj.approve()
+
+    @classmethod
+    def invalid(cls, pk, vendor_id):
+        """
+        作废合同
+        :param pk:
+        :param vendor_id:
+        :return:
+        """
+        try:
+            obj = VendorContract.objects.get(pk=pk, vendor=vendor_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        return obj.invalid()
