@@ -39,7 +39,8 @@ INSTALLED_APPS = [
     'DMP.BusinessLog',
     'DMP.District',
     'DMP.File',
-    'DMP.Business'
+    'DMP.Business',
+    'DMP.Product'
 ]
 
 MIDDLEWARE = [
@@ -104,6 +105,14 @@ DATABASES = {
     },
     'FileMysql': {
         'NAME': 'file',
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306'
+    },
+    'ProductMysql': {
+        'NAME': 'product',
         'ENGINE': 'django.db.backends.mysql',
         'USER': 'root',
         'PASSWORD': '',
