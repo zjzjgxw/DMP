@@ -13,7 +13,10 @@ class CategoryViewSet(ViewSet):
 
     @auth_permission_required(["vendor_list"])
     def list(self, request):
-        pass
+        business_id = request.dmp_user['business_id']
+        page_paginate = PagePaginate(request)
+        data = CategoryService.list(business_id, page_paginate.page, page_paginate.page_size)
+        return Response(return_format(200, data=data))
 
     @auth_permission_required(["vendor_list"])
     def create(self, request):

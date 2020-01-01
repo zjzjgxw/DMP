@@ -74,3 +74,10 @@ class CategoryService(BasicService):
             object_list.append(CategoryAttribute(category_id=category_id, name=item["name"], option=item["option"]))
         CategoryAttribute.objects.bulk_create(object_list)
         return True
+
+    @classmethod
+    def list(cls, business_id, page=1, page_size=10):
+        count = Category.objects.count(business_id=business_id)
+        object_list = Category.objects.list(page, page_size, business_id=business_id)
+        serializer = CategorySerializer(object_list, many=True)
+        return {"list": serializer.data, "count": count}
