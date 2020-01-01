@@ -32,6 +32,9 @@ class CategoryAttribute(models.Model):
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
 
+    class Meta:
+        db_table = 'product_category_attribute'
+
 
 class CategorySpecification(models.Model):
     """
@@ -43,3 +46,6 @@ class CategorySpecification(models.Model):
     option = models.CharField("规格值", max_length=10, default="")
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
+
+    class Meta:
+        db_table = 'product_category_specification'

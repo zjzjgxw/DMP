@@ -19,5 +19,6 @@ urlpatterns = [
     path('api/', include('DMP.BusinessLog.urls')),
     path('api/', include('DMP.District.urls')),
     path('api/', include('DMP.File.urls')),
-    path('api/', include('DMP.Business.urls'))
+    path('api/', include('DMP.Business.urls')),
+    path('api/', include('DMP.Product.urls'))
 ]

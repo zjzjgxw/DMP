@@ -125,7 +125,8 @@ DATABASES_APPS_MAPPING = {
     'BusinessLog': 'BusinessLog',
     'District': 'DistrictMysql',
     'Business': 'BusinessMysql',
-    'File': 'FileMysql'
+    'File': 'FileMysql',
+    'Product': 'ProductMysql'
 }
 
 DATABASE_ROUTERS = ['DMP.database_router.DatabaseAppsRouter']
