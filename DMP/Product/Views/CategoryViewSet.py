@@ -26,15 +26,21 @@ class CategoryViewSet(ViewSet):
 
     @auth_permission_required(['vendor_detail'])
     def retrieve(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        data = CategoryService.detail(business_id, pk)
+        return Response(return_format(200, data=data))
 
     @auth_permission_required(['vendor_update'])
     def update(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        res = CategoryService.update(business_id, pk, **request.data)
+        return Response(return_format(200, data={"res": res}))
 
     def partial_update(self, request, pk=None):
         pass
 
     @auth_permission_required(['vendor_delete'])
     def destroy(self, request, pk=None):
-        pass
+        business_id = request.dmp_user['business_id']
+        res = CategoryService.delete(business_id, pk)
+        return Response(return_format(200, data={"res": res}))

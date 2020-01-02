@@ -76,5 +76,5 @@ class CategorySerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Category
-        fields = ['id', 'business_id', 'name', 'parent_id', 'specification_list',"attribute_list"]
+        fields = ['id', 'business_id', 'name', 'parent_id', 'specification_list', "attribute_list"]
         extra_kwargs = {'name': {'required': True}, 'business_id': {'required': True}}

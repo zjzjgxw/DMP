@@ -81,3 +81,61 @@ class CategoryService(BasicService):
         object_list = Category.objects.list(page, page_size, business_id=business_id)
         serializer = CategorySerializer(object_list, many=True)
         return {"list": serializer.data, "count": count}
+
+    @classmethod
+    def detail(cls, business_id, pk):
+        try:
+            obj = Category.objects.get(pk=pk, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException
+        serializer = CategorySerializer(obj)
+        return serializer.data
+
+    @classmethod
+    def update(cls, business_id, pk, **kwargs):
+        try:
+            obj = Category.objects.get(pk=pk, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException
+        if "id" in kwargs:
+            del kwargs["id"]
+        if "business_id" in kwargs:
+            del kwargs["business_id"]
+        specification_list = []
+        if "specification_list" in kwargs:  # 规格参数必传
+            if isinstance(kwargs['specification_list'], list) and len(kwargs['specification_list']) > 0:
+                specification_list = kwargs['specification_list']
+            else:
+                ValidationException(20010)
+        else:
+            raise ValidationException(20010)
+        attribute_list = []
+        if "attribute_list" in kwargs:
+            if isinstance(kwargs['attribute_list'], list):
+                attribute_list = kwargs['attribute_list']
+            else:
+                ValidationException(20011)
+        try:
+            with transaction.atomic('ProductMysql'):
+                serializer = CategorySerializer(obj, kwargs, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    raise ValidationException(serializer.errors)
+                CategorySpecification.objects.filter(category_id=obj.id).delete()
+                cls._create_specification(obj.id, specification_list)
+                CategoryAttribute.objects.filter(category_id=obj.id).delete()
+                cls._create_attribute(obj.id, attribute_list)
+                return True
+        except IntegrityError:
+            raise
+
+    @classmethod
+    def delete(cls, business_id, pk):
+        try:
+            obj = Category.objects.get(pk=pk, business_id=business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException
+        obj.delete_flag = 1
+        obj.save()
+        return True
