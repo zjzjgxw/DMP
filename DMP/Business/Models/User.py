@@ -45,7 +45,7 @@ class User(models.Model):
     account = models.EmailField("账号名", max_length=100, default="")
     password = models.CharField("密码", max_length=100, default="")
     name = models.CharField("真实姓名", max_length=100, default="")
-    entry_date = models.DateField("入职日期")
+    entry_date = models.DateField("入职日期", default='2020-01-01')
     last_login = models.DateTimeField("最近登录时间", default='2019-08-04')
     last_ip = models.GenericIPAddressField("最近登录IP", default='')
     login_count = models.PositiveIntegerField("登录次数", default=0)
@@ -97,5 +97,4 @@ class UserSerializer(ModelSerializer):
                   'sex', 'is_admin', 'is_active', 'business']
         extra_kwargs = {'account': {'required': True, 'read_only': True},
                         'password': {'required': True, 'write_only': True},
-                        "name": {'required': True},
-                        "entry_date": {'required': True}}
+                        "name": {'required': True}}

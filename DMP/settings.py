@@ -43,6 +43,22 @@ INSTALLED_APPS = [
     'DMP.Product'
 ]
 
+MIGRATION_MODULES = {
+    'auth': None,
+    'admin': None,
+    'messages': None,
+    'staticfiles': None,
+    'contenttypes': None,
+    'default': None,
+    'sessions': None,
+
+    'BusinessLog': None,
+    'District': None,
+    'File': None,
+    'Business': None,
+    'Product': None,
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -78,6 +94,15 @@ WSGI_APPLICATION = 'DMP.wsgi.application'
 
 DATABASES = {
     'default': {
+        'NAME': 'test_db',
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_db'
+        }
     },
     'BusinessLog': {
         'NAME': 'business_log',
@@ -85,7 +110,10 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3306'
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_db'
+        }
     },
     'DistrictMysql': {
         'NAME': 'district',
@@ -93,7 +121,10 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3306'
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_db'
+        }
     },
     'BusinessMysql': {
         'NAME': 'business',
@@ -101,7 +132,10 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3306'
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_db'
+        }
     },
     'FileMysql': {
         'NAME': 'file',
@@ -109,7 +143,10 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3306'
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_db'
+        }
     },
     'ProductMysql': {
         'NAME': 'product',
@@ -117,7 +154,10 @@ DATABASES = {
         'USER': 'root',
         'PASSWORD': '',
         'HOST': 'localhost',
-        'PORT': '3306'
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_db'
+        }
     }
 }
 
