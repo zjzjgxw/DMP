@@ -207,7 +207,6 @@ USE_TZ = False
 MEDIA_ROOT = os.path.join(BASE_DIR, 'Upload')
 STATIC_URL = '/static/'
 
-APPEND_SLASH = False
 
 LOGGING = {
     'version': 1,
