@@ -128,11 +128,36 @@ class DetailSerializer(serializers.ModelSerializer):
                 raise ValidationException(20016)
             if not isinstance(item["option"], str):
                 raise ValidationException(20016)
+        return attrs
+
+    def validate_main_images(self, attrs):
+        for item in attrs:
+            if not isinstance(item, dict):
+                raise ValidationException(20017)
+            if "img_id" not in item or "index_no" not in item:
+                raise ValidationException(20017)
+            if not isinstance(item["img_id"], int):
+                raise ValidationException(20017)
+            if not isinstance(item["index_no"], int):
+                raise ValidationException(20017)
+        return attrs
+
+    def validate_describe_images(self, attrs):
+        for item in attrs:
+            if not isinstance(item, dict):
+                raise ValidationException(20018)
+            if "img_id" not in item or "index_no" not in item:
+                raise ValidationException(20018)
+            if not isinstance(item["img_id"], int):
+                raise ValidationException(20018)
+            if not isinstance(item["index_no"], int):
+                raise ValidationException(20018)
+        return attrs
 
     def create(self, validated_data):
         try:
             with transaction.atomic('ProductMysql'):
-                detail_data = validated_data
+                detail_data = validated_data.copy()
                 del detail_data["attribute_list"]
                 del detail_data["describe_images"]
                 del detail_data["main_images"]
@@ -160,11 +185,11 @@ class DetailSerializer(serializers.ModelSerializer):
         model = Detail
         fields = ["id", "business_id", "category", "name", "model", "stock_type", "attribute_list", "main_images",
                   "describe_images"]
-        extra_kwargs = {'name': {'required': True}, 'business_id': {'required': True}}
+        extra_kwargs = {'name': {'required': True}, 'business_id': {'required': True}, 'stock_type': {'required': True}}
 
 
 class SnapshotSerializer(serializers.ModelSerializer):
     class Meta:
         model = Snapshot
-        fields = ["id", "detail", "json_content", "created_at", "stock_type"]
+        fields = ["id", "detail", "json_content", "created_at"]
         extra_kwargs = {'json_content': {'required': True}}

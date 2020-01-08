@@ -18,7 +18,9 @@ CODE_MAP = {
     20013: "缺少option属性",
     20014: "name最多支持10个字符",
     20015: "option最多支持10个字符",
-    20016: "attribute_list参数内容错误"
+    20016: "attribute_list参数内容错误",
+    20017: "main_images参数内容错误",
+    20018: "describe_images参数内容错误"
 }
 
 
