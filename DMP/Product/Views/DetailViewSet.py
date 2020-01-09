@@ -26,8 +26,8 @@ class DetailViewSet(ViewSet):
 
     @auth_permission_required(['vendor_detail'])
     def retrieve(self, request, pk=None):
-        # business_id = request.dmp_user['business_id']
-        # data = CategoryService.detail(business_id, pk)
+        business_id = request.dmp_user['business_id']
+        data = DetailService.detail(business_id, pk)
         return Response(return_format(200, data=data))
 
     @auth_permission_required(['vendor_update'])

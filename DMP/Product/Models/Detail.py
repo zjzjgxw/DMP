@@ -4,10 +4,12 @@ from DMP.Core.Paginate import PageManager
 from django.db import transaction, IntegrityError
 from DMP.Product.Models.Category import Category
 from DMP.Core.Exceptions import ValidationException
+from DMP.Core.Serializers import DynamicFieldSerializer
 
 
 class DetailManager(PageManager):
-    pass
+    def detail(self, pk, business_id):
+        return self.get(id=pk, business_id=business_id, delete_flag=0)
 
 
 class Detail(models.Model):
@@ -104,7 +106,7 @@ class MainImagesSerializer(serializers.ModelSerializer):
         fields = ["id", "detail", "img_id", "index_no"]
 
 
-class DetailSerializer(serializers.ModelSerializer):
+class DetailSerializer(DynamicFieldSerializer):
     main_images = serializers.ListField()
     describe_images = serializers.ListField()
     attribute_list = serializers.ListField()
@@ -116,7 +118,7 @@ class DetailSerializer(serializers.ModelSerializer):
         pass
 
     def get_attribute_list(self, obj):
-        pass
+        return []
 
     def validate_attribute_list(self, attrs):
         for item in attrs:

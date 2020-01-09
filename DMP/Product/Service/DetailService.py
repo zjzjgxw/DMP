@@ -19,3 +19,12 @@ class DetailService(BasicService):
         else:
             raise ValidationException(detail=serializer.errors)
         return obj.id
+
+    @classmethod
+    def detail(cls, business_id, pk):
+        try:
+            obj = Detail.objects.detail(pk, business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException
+        serializer = DetailSerializer(obj)
+        return serializer.data
