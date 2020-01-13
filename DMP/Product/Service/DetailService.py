@@ -1,8 +1,10 @@
 from DMP.Core.Service import BasicService
 from django.core.exceptions import ObjectDoesNotExist
 from DMP.Core.Exceptions import ValidationException, ObjectDoesNotExistException
-from DMP.Product.Models.Detail import Detail, DetailSerializer, DetailAttribute, MainImages, DescribeImages
+from DMP.Product.Models.Detail import Detail, DetailSerializer, DetailAttribute, MainImages, DescribeImages, \
+    DetailAttributeSerializer, MainImagesSerializer, DescribeImagesSerializer
 from django.db import transaction, IntegrityError
+from DMP.File.Service.FileService import FileService
 
 
 class DetailService(BasicService):
@@ -101,4 +103,20 @@ class DetailService(BasicService):
         except ObjectDoesNotExist:
             raise ObjectDoesNotExistException
         serializer = DetailSerializer(obj)
-        return serializer.data
+        ret_data = serializer.data
+
+        ret_data['attribute_list'] = DetailAttributeSerializer(obj.detailattribute_set, many=True).data
+        ret_data['main_images'] = MainImagesSerializer(obj.mainimages_set, many=True).data
+        file_ids = []
+        for item in ret_data['main_images']:
+            file_ids.append(item['img_id'])
+        ret_data['describe_images'] = DescribeImagesSerializer(obj.describeimages_set, many=True).data
+        for item in ret_data['describe_images']:
+            file_ids.append(item['img_id'])
+        ret_data['file_map'] = cls._file_info(file_ids)
+        return ret_data
+
+    @classmethod
+    def _file_info(cls, file_ids):
+        service = FileService()
+        return service.list(file_ids)

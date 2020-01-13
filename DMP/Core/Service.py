@@ -4,4 +4,7 @@ class BasicService:
     """
     errors = None
     error_code = None
+    file_service = None
+    file_stock_type = 1
+    file_module_name = 'common'
 
