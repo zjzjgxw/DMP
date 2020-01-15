@@ -120,3 +120,36 @@ class DetailService(BasicService):
     def _file_info(cls, file_ids):
         service = FileService()
         return service.list(file_ids)
+
+    @classmethod
+    def update(cls, business_id, pk, **kwargs):
+        cls._validate_kwargs(kwargs)
+        try:
+            obj = Detail.objects.detail(pk, business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException
+        try:
+            with transaction.atomic('ProductMysql'):
+                serializer = DetailSerializer(obj, kwargs, partial=True)
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    raise ValidationException(serializer.errors)
+                attribute_list = []
+                for item in kwargs['attribute_list']:
+                    attribute_list.append(DetailAttribute(detail_id=obj.id, **item))
+                DetailAttribute.objects.filter(detail_id=obj.id).delete()
+                DetailAttribute.objects.bulk_create(attribute_list)
+                main_image_list = []
+                for item in kwargs['main_images']:
+                    main_image_list.append(MainImages(detail_id=obj.id, **item))
+                MainImages.objects.filter(detail_id=obj.id).delete()
+                MainImages.objects.bulk_create(main_image_list)
+                describe_image_list = []
+                for item in kwargs["describe_images"]:
+                    describe_image_list.append(DescribeImages(detail_id=obj.id, **item))
+                DescribeImages.objects.filter(detail_id=obj.id).delete()
+                DescribeImages.objects.bulk_create(describe_image_list)
+                return True
+        except IntegrityError:
+            raise

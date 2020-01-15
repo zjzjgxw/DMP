@@ -72,19 +72,6 @@ class MainImages(models.Model):
         db_table = 'product_detail_main_img'
 
 
-class Snapshot(models.Model):
-    """
-    商品快照
-    """
-    detail = models.ForeignKey(Detail, on_delete=models.CASCADE, db_column='detail_id',
-                               db_constraint=False)
-    json_content = models.TextField("快照信息", default="")
-    created_at = models.DateTimeField("产生时间", auto_now_add=True)
-
-    class Meta:
-        db_table = 'product_detail_snapshot'
-
-
 class DetailAttributeSerializer(serializers.ModelSerializer):
     class Meta:
         model = DetailAttribute
@@ -108,10 +95,3 @@ class DetailSerializer(serializers.ModelSerializer):
         model = Detail
         fields = ["id", "business_id", "category", "name", "model", "stock_type"]
         extra_kwargs = {'name': {'required': True}, 'business_id': {'required': True}, 'stock_type': {'required': True}}
-
-
-class SnapshotSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Snapshot
-        fields = ["id", "detail", "json_content", "created_at"]
-        extra_kwargs = {'json_content': {'required': True}}

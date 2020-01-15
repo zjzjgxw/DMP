@@ -40,4 +40,7 @@ class FileService:
 
         query_set = Files.objects.filter(id__in=ids)
         serializer = FilesSerializers(query_set, many=True)
-        return serializer.data
+        data_dict = {}
+        for item in serializer.data:
+            data_dict[item['id']] = item
+        return data_dict

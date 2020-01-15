@@ -32,8 +32,8 @@ class DetailViewSet(ViewSet):
 
     @auth_permission_required(['vendor_update'])
     def update(self, request, pk=None):
-        # business_id = request.dmp_user['business_id']
-        # res = CategoryService.update(business_id, pk, **request.data)
+        business_id = request.dmp_user['business_id']
+        res = DetailService.update(business_id, pk, **request.data)
         return Response(return_format(200, data={"res": res}))
 
     def partial_update(self, request, pk=None):
