@@ -41,6 +41,6 @@ class DetailViewSet(ViewSet):
 
     @auth_permission_required(['vendor_delete'])
     def destroy(self, request, pk=None):
-        # business_id = request.dmp_user['business_id']
-        # res = CategoryService.delete(business_id, pk)
+        business_id = request.dmp_user['business_id']
+        res = DetailService.delete(business_id, pk)
         return Response(return_format(200, data={"res": res}))

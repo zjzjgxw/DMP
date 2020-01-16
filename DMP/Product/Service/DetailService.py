@@ -153,3 +153,13 @@ class DetailService(BasicService):
                 return True
         except IntegrityError:
             raise
+
+    @classmethod
+    def delete(cls, business_id, pk):
+        try:
+            obj = Detail.objects.detail(pk, business_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException
+        obj.delete_flag = 1
+        obj.save()
+        return True
