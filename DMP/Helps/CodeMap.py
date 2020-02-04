@@ -20,7 +20,11 @@ CODE_MAP = {
     20015: "option最多支持10个字符",
     20016: "缺少attribute_list或者attribute_list参数内容错误",
     20017: "缺少main_images或者main_images参数内容错误",
-    20018: "缺少describe_images或者describe_images参数内容错误"
+    20018: "缺少describe_images或者describe_images参数内容错误",
+    30001: "缺少币种信息",
+    30002: "币种格式不正确",
+    30003: "缺少product_id信息",
+    30004: "库存信息不正确"
 }
 
 

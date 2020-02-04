@@ -121,7 +121,7 @@ class CategoryService(BasicService):
                 if serializer.is_valid():
                     serializer.save()
                 else:
-                    raise ValidationException(serializer.errors)
+                    raise ValidationException(detail=serializer.errors)
                 CategorySpecification.objects.filter(category_id=obj.id).delete()
                 cls._create_specification(obj.id, specification_list)
                 CategoryAttribute.objects.filter(category_id=obj.id).delete()
