@@ -23,7 +23,7 @@ class StockService(BasicService):
                 data["currency_code"] = kwargs["currency_code"]
                 if isinstance(specifications, dict) and isinstance(stock_list, list) and len(stock_list) > 0:
                     data["default_specifications"] = json.dumps(specifications, ensure_ascii=False)
-                    serializer = StockInfoSerializer(daiata=data)
+                    serializer = StockInfoSerializer(data=data)
                     if serializer.is_valid():
                         obj = serializer.save()
                         stock_specifications_detail_list = []
@@ -50,7 +50,7 @@ class StockService(BasicService):
 
     @classmethod
     def _validate_kwargs(cls, kwargs):
-        if not "product_id" in kwargs:
+        if "product_id" not in kwargs:
             raise ValidationException(30003)
         if "currency_code" in kwargs:
             if len(kwargs["currency_code"]) != 3:
@@ -70,3 +70,38 @@ class StockService(BasicService):
         except ObjectDoesNotExist:
             raise ObjectDoesNotExistException()
         return stock_obj.format_data()
+
+    @classmethod
+    def update(cls, product_id, **kwargs):
+        """
+        修改库存信息
+        :param product_id:
+        :param kwargs:
+        :return:
+        """
+        try:
+            stock_obj = StockInfo.objects.get(product_id=product_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        if "product_id" in kwargs:
+            del kwargs['product_id']
+        serializer = StockInfoSerializer(instance=stock_obj, data=kwargs, partial=True)
+        specifications = kwargs['specifications']
+        stock_list = kwargs['stock_list']
+        try:
+            with transaction.atomic('ProductMysql'):
+                if serializer.is_valid():
+                    serializer.save()
+                else:
+                    raise ValidationException(detail=serializer.errors)
+                if isinstance(specifications, dict) and isinstance(stock_list, list) and len(stock_list) > 0:
+                    stock_obj.stockspecificationdetail_set.all().delete()  # 删除库存信息
+                    stock_specifications_detail_list = []
+                    for item in stock_list:
+                        stock_specifications_detail_list.append(StockSpecificationDetail(stock_id=stock_obj.id, **item))
+                    StockSpecificationDetail.objects.bulk_create(stock_specifications_detail_list)
+                return True
+        except IntegrityError:
+            raise
+        except:
+            raise
