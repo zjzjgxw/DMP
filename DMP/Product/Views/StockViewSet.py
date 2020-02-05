@@ -3,7 +3,9 @@ from rest_framework.response import Response
 from DMP.Helps.func import return_format
 from DMP.Core.Token import auth_permission_required
 from DMP.Product.Service.StockService import StockService
+from DMP.Core.Exceptions import ValidationException
 import time
+
 
 class StockViewSet(ViewSet):
     """
@@ -25,8 +27,7 @@ class StockViewSet(ViewSet):
 
     @auth_permission_required(['product_detail_info'])
     def retrieve(self, request, pk=None):
-        business_id = request.dmp_user['business_id']
-        data = DetailService.detail(business_id, pk)
+        data = StockService.detail(pk)
         return Response(return_format(200, data=data))
 
     @auth_permission_required(['product_detail_update'])

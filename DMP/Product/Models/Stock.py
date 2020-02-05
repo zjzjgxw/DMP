@@ -1,5 +1,6 @@
 from django.db import models
 from rest_framework import serializers
+import json
 
 
 class StockInfo(models.Model):
@@ -14,6 +15,35 @@ class StockInfo(models.Model):
     sale_num = models.PositiveIntegerField("总销量", default=0)
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
+
+    def format_data(self):
+        data = dict()
+        data['id'] = self.id
+        data['product_id'] = self.product_id
+        data['currency_code'] = self.currency_code
+        data['price'] = self.price
+        data['last_num'] = self.last_num
+        try:
+            data['specifications'] = json.loads(self.default_specifications)
+            data['specification_detail'] = self._get_specification_detail()
+        except json.JSONDecodeError:
+            data['specifications'] = None
+            data['specification_detail'] = []
+        return data
+
+    def _get_specification_detail(self):
+        data = []
+        for item in self.stockspecificationdetail_set.all():
+            tmp = dict()
+            tmp['first_specification_name'] = item.first_specification_name
+            tmp['first_specification_value'] = item.first_specification_value
+            tmp['second_specification_name'] = item.second_specification_name
+            tmp['second_specification_value'] = item.second_specification_value
+            tmp['price'] = item.price
+            tmp['last_num'] = item.last_num
+            tmp['sku'] = item.sku
+            data.append(tmp)
+        return data
 
     class Meta:
         db_table = 'stock_info'

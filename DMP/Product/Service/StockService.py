@@ -2,7 +2,7 @@ from DMP.Core.Service import BasicService
 from django.core.exceptions import ObjectDoesNotExist
 from DMP.Core.Exceptions import ValidationException, ObjectDoesNotExistException
 from django.db import transaction, IntegrityError
-from DMP.Product.Models.Stock import StockInfoSerializer, StockSpecificationDetail
+from DMP.Product.Models.Stock import StockInfoSerializer, StockSpecificationDetail, StockInfo
 import json
 
 
@@ -13,6 +13,7 @@ class StockService(BasicService):
 
     @classmethod
     def create(cls, **kwargs):
+        cls._validate_kwargs(kwargs)
         try:
             with transaction.atomic('ProductMysql'):
                 specifications = kwargs['specifications']
@@ -56,3 +57,16 @@ class StockService(BasicService):
                 raise ValidationException(30002)
         else:
             raise ValidationException(30001)
+
+    @classmethod
+    def detail(cls, product_id):
+        """
+        获取库存详情
+        :param product_id: 商品id
+        :return:
+        """
+        try:
+            stock_obj = StockInfo.objects.get(product_id=product_id)
+        except ObjectDoesNotExist:
+            raise ObjectDoesNotExistException()
+        return stock_obj.format_data()
