@@ -13,9 +13,19 @@ class DetailViewSet(ViewSet):
 
     @auth_permission_required(["product_detail_list"])
     def list(self, request):
-        # business_id = request.dmp_user['business_id']
-        # page_paginate = PagePaginate(request)
-        # data = CategoryService.list(business_id, page_paginate.page, page_paginate.page_size)
+        business_id = request.dmp_user['business_id']
+        page_paginate = PagePaginate(request)
+        name = None
+        category_id = None
+        status_type = None
+        if "name" in request.data:
+            name = request.data['name']
+        if "category_id" in request.data:
+            category_id = request.data['category_id']
+        if "status_type" in request.data:
+            status_type = request.data['status_type']
+        data = DetailService.list(business_id=business_id, name=name, category_id=category_id, status_type=status_type,
+                                  page=page_paginate.page, page_size=page_paginate.page_size)
         return Response(return_format(200, data=data))
 
     @auth_permission_required(["product_detail_create"])

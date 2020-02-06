@@ -16,6 +16,8 @@ class StockInfo(models.Model):
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
 
+    _cache_specification_detail = []  # 缓存的规格详情
+
     def format_data(self):
         data = dict()
         data['id'] = self.id
@@ -31,19 +33,31 @@ class StockInfo(models.Model):
             data['specification_detail'] = []
         return data
 
+    def _has_specification(self):
+        """
+        判断有没有规格详情
+        :return:
+        """
+        try:
+            specifications = json.loads(self.default_specifications)
+            if isinstance(specifications, dict):
+                return True
+        except json.JSONDecodeError:
+            return False
+
     def _get_specification_detail(self):
-        data = []
-        for item in self.stockspecificationdetail_set.all():
-            tmp = dict()
-            tmp['first_specification_name'] = item.first_specification_name
-            tmp['first_specification_value'] = item.first_specification_value
-            tmp['second_specification_name'] = item.second_specification_name
-            tmp['second_specification_value'] = item.second_specification_value
-            tmp['price'] = item.price
-            tmp['last_num'] = item.last_num
-            tmp['sku'] = item.sku
-            data.append(tmp)
-        return data
+        if len(self._cache_specification_detail) == 0:
+            for item in self.stockspecificationdetail_set.all():
+                tmp = dict()
+                tmp['first_specification_name'] = item.first_specification_name
+                tmp['first_specification_value'] = item.first_specification_value
+                tmp['second_specification_name'] = item.second_specification_name
+                tmp['second_specification_value'] = item.second_specification_value
+                tmp['price'] = item.price
+                tmp['last_num'] = item.last_num
+                tmp['sku'] = item.sku
+                self._cache_specification_detail.append(tmp)
+        return self._cache_specification_detail
 
     class Meta:
         db_table = 'stock_info'

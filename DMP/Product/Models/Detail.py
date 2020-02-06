@@ -19,6 +19,12 @@ class Detail(models.Model):
         (STOCK_TYPE_BUY, '拍下减库存'),
         (STOCK_TYPE_PAID, '付款减库存')
     )
+    STATUS_ON_SHELF = 1
+    STATUS_OFF_SHELF = 2
+    STATUS_TYPE_CHOICES = (
+        (STATUS_ON_SHELF, '上架中'),
+        (STATUS_OFF_SHELF, '下架中')
+    )
 
     business_id = models.PositiveIntegerField("商户id")
     name = models.CharField("商品名称", max_length=255, default="")
@@ -26,6 +32,7 @@ class Detail(models.Model):
                                  db_constraint=False)
     model = models.PositiveSmallIntegerField("交易模式", default=1)
     stock_type = models.PositiveSmallIntegerField("库存方式", choices=STOCK_TYPE_CHOICES, default=STOCK_TYPE_BUY)
+    status_type = models.PositiveSmallIntegerField("商品状态", choices=STATUS_TYPE_CHOICES, default=STATUS_ON_SHELF)
     delete_flag = models.PositiveSmallIntegerField("删除标记", default=0)
     created_at = models.DateTimeField("产生时间", auto_now_add=True)
     updated_at = models.DateTimeField("修改时间", auto_now=True)
@@ -93,5 +100,5 @@ class MainImagesSerializer(serializers.ModelSerializer):
 class DetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Detail
-        fields = ["id", "business_id", "category", "name", "model", "stock_type"]
+        fields = ["id", "business_id", "category", "name", "model", "stock_type", "status_type"]
         extra_kwargs = {'name': {'required': True}, 'business_id': {'required': True}, 'stock_type': {'required': True}}

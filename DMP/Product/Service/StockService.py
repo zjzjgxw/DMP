@@ -13,6 +13,11 @@ class StockService(BasicService):
 
     @classmethod
     def create(cls, **kwargs):
+        """
+        新建库存
+        :param kwargs:
+        :return:
+        """
         cls._validate_kwargs(kwargs)
         try:
             with transaction.atomic('ProductMysql'):
@@ -105,3 +110,16 @@ class StockService(BasicService):
             raise
         except:
             raise
+
+    @classmethod
+    def get_prices(cls, product_ids):
+        """
+        根据商品Id 获取价格信息
+        :param product_ids: 商品id列表
+        :return:
+        """
+        obj_list = StockInfo.objects.filter(product_id__in=product_ids)
+        res = dict()
+        for item in obj_list:
+            res[item.id] = item.price
+        return res

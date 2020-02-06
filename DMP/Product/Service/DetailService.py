@@ -163,3 +163,17 @@ class DetailService(BasicService):
         obj.delete_flag = 1
         obj.save()
         return True
+
+    @classmethod
+    def list(cls, business_id, name=None, category_id=None, status_type=None, page=1, page_size=10):
+        kwargs = {"business_id": business_id}
+        if name is not None:
+            kwargs["name"] = name
+        if category_id is not None:
+            kwargs["category_id"] = category_id
+        if status_type is not None:
+            kwargs["status_type"] = status_type
+        count = Detail.objects.count(**kwargs)
+        object_list = Detail.objects.list(page, page_size, **kwargs)
+        serializer = DetailSerializer(object_list, many=True)
+        return {"list": serializer.data, "count": count}
