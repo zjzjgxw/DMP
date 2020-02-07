@@ -176,10 +176,7 @@ class DetailService(BasicService):
         count = Detail.objects.count(**kwargs)
         object_list = Detail.objects.list(page, page_size, **kwargs)
         serializer = DetailSerializer(object_list, many=True)
-        product_ids = []
-        for item in object_list:
-            product_ids.append(item.id)
-        price_dict = cls._get_product_price(product_ids)
+        price_dict = cls._get_product_price([item.id for item in object_list])
         res = serializer.data
         for item in res:
             if item["id"] in price_dict:
