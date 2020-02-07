@@ -176,4 +176,26 @@ class DetailService(BasicService):
         count = Detail.objects.count(**kwargs)
         object_list = Detail.objects.list(page, page_size, **kwargs)
         serializer = DetailSerializer(object_list, many=True)
-        return {"list": serializer.data, "count": count}
+        product_ids = []
+        for item in object_list:
+            product_ids.append(item.id)
+        price_dict = cls._get_product_price(product_ids)
+        res = serializer.data
+        for item in res:
+            if item["id"] in price_dict:
+                item["price"] = price_dict[item["id"]]
+            else:
+                item["price"] = None
+        return {"list": res, "count": count}
+
+    @classmethod
+    def _get_product_price(cls, product_ids):
+        """
+        获取商品价格
+        :param product_ids:
+        :return:
+        """
+        if len(product_ids) == 0:
+            return None
+        from DMP.Product.Service.StockService import StockService
+        return StockService.get_prices(product_ids)

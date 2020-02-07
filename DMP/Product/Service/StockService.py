@@ -121,5 +121,5 @@ class StockService(BasicService):
         obj_list = StockInfo.objects.filter(product_id__in=product_ids)
         res = dict()
         for item in obj_list:
-            res[item.id] = item.price
+            res[item.product_id] = item.price
         return res
