@@ -40,7 +40,8 @@ INSTALLED_APPS = [
     'DMP.District',
     'DMP.File',
     'DMP.Business',
-    'DMP.Product'
+    'DMP.Product',
+    'DMP.Order'
 ]
 
 MIGRATION_MODULES = {
@@ -57,6 +58,7 @@ MIGRATION_MODULES = {
     'File': None,
     'Business': None,
     'Product': None,
+    'Order': None
 }
 
 MIDDLEWARE = [
@@ -158,7 +160,18 @@ DATABASES = {
         'TEST': {
             'NAME': 'test_db'
         }
-    }
+    },
+    'OrderMysql': {
+        'NAME': 'order',
+        'ENGINE': 'django.db.backends.mysql',
+        'USER': 'root',
+        'PASSWORD': '',
+        'HOST': 'localhost',
+        'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_db'
+        }
+    },
 }
 
 DATABASES_APPS_MAPPING = {
@@ -166,7 +179,8 @@ DATABASES_APPS_MAPPING = {
     'District': 'DistrictMysql',
     'Business': 'BusinessMysql',
     'File': 'FileMysql',
-    'Product': 'ProductMysql'
+    'Product': 'ProductMysql',
+    'Order': 'OrderMysql'
 }
 
 DATABASE_ROUTERS = ['DMP.database_router.DatabaseAppsRouter']
@@ -206,7 +220,6 @@ USE_TZ = False
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 MEDIA_ROOT = os.path.join(BASE_DIR, 'Upload')
 STATIC_URL = '/static/'
-
 
 LOGGING = {
     'version': 1,
