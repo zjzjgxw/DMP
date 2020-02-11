@@ -123,3 +123,31 @@ class StockService(BasicService):
         for item in obj_list:
             res[item.product_id] = item.price
         return res
+
+    @classmethod
+    def check_stock(cls, product_list):
+        """
+        根据商品信息，检验库存是否足够
+        :param product_list:
+        :return:
+        """
+        if not isinstance(product_list, list):
+            raise ValidationException(10007)
+        if len(product_list) == 0:
+            raise ValidationException(30005)
+        res_dict = {"res": True, "failed": []}
+        for info in product_list:
+            for item in ["first_specification_name", "second_specification_name"]:
+                if item not in info:
+                    info[item] = None
+            try:
+                stock_obj = StockInfo.objects.get(product_id=info['product_id'])
+            except ObjectDoesNotExist:
+                raise ObjectDoesNotExistException()
+            res = stock_obj.check_stock(info["num"], info["first_specification_name"],
+                                        info["first_specification_value"], info["second_specification_name"],
+                                        info["second_specification_value"])
+            if not res:  # 库存不满足
+                res_dict["res"] = False
+                res_dict["failed"].append(info)
+        return res_dict

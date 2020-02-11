@@ -33,6 +33,23 @@ class StockInfo(models.Model):
             data['specification_detail'] = []
         return data
 
+    def check_stock(self, num, first_spec_name=None, first_spec_value=None, second_spec_name=None,
+                    second_spec_value=None):
+        if num is None:
+            return False
+        if first_spec_name is None:
+            return self.last_num >= num
+        else:
+            if second_spec_name is None:
+                detail = self.stockspecificationdetail_set.filter(first_specification_name=first_spec_name,
+                                                                  first_specification_value=first_spec_value).first()
+            else:
+                detail = self.stockspecificationdetail_set.filter(first_specification_name=first_spec_name,
+                                                                  first_specification_value=first_spec_value,
+                                                                  second_specification_name=second_spec_name,
+                                                                  second_specification_value=second_spec_value).first()
+            return detail.last_num >= num
+
     def _has_specification(self):
         """
         判断有没有规格详情
