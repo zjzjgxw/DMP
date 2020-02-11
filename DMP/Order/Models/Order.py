@@ -44,8 +44,8 @@ class OrderInfo(models.Model):
     )
 
     business_id = models.PositiveIntegerField("商户id")
-    customer_id = models.PositiveIntegerField("客户id")
-    operator_id = models.PositiveIntegerField("录入人id")
+    customer_id = models.PositiveIntegerField("客户id", default=0)
+    operator_id = models.PositiveIntegerField("录入人id", default=0)
     unique_code = models.CharField("订单唯一标示", max_length=20)
     name = models.CharField("订单名称", max_length=255, default="")
     price = models.DecimalField("价格", default=0, max_digits=12, decimal_places=2)
@@ -70,6 +70,26 @@ class OrderInfo(models.Model):
 
     class Meta:
         db_table = 'order_info'
+
+
+class OrderProduct(models.Model):
+    """
+    订单商品详情
+    """
+    order = models.ForeignKey(OrderInfo, on_delete=models.CASCADE, db_column='order_info_id',
+                              db_constraint=False)
+    product_id = models.PositiveIntegerField("商品id")
+    product_name = models.CharField("商品名称", max_length=250)
+    image_id = models.PositiveIntegerField("图片文件id")
+    snapshoot = models.TextField("商品快照信息")
+    specification_info = models.CharField("规格信息")
+    price = models.DecimalField("价格", default=0, max_digits=12, decimal_places=2)
+    discount_price = models.DecimalField("优惠价格", default=0, max_digits=12, decimal_places=2)
+    original_price = models.DecimalField("优惠价格", default=0, max_digits=12, decimal_places=2)
+    num = models.PositiveIntegerField("购买数量")
+
+    class Meta:
+        db_table = 'order_product'
 
 
 class OrderInfoSerializer(serializers.ModelSerializer):

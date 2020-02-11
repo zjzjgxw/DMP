@@ -11,7 +11,7 @@ class OrderService(BasicService):
     """
 
     @classmethod
-    def create(cls, **kwargs):
+    def create(cls, business_id, operator_id=None, customer_id=None, **kwargs):
         """
         新建订单
         :param kwargs:
